@@ -3,6 +3,8 @@ CMD line Calculator
 
 simple cmd line calculator
 
+[![Build Status](https://travis-ci.org/lmcoy/calculator.svg?branch=master)](https://travis-ci.org/lmcoy/calculator)
+
 calculator
 ----------
 
