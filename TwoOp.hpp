@@ -6,6 +6,7 @@
 #define TwoOp_hpp
 
 #include <list>
+#include <algorithm>
 
 #include "Node.hpp"
 #include "NumberRepr.hpp"

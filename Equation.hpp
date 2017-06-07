@@ -30,7 +30,7 @@ public:
 
   void WriteInternalRepToStream(std::ostream &s);
 
-  bool operator==(const Equation::Equation &e) const;
+  bool operator==(const Equation &e) const;
 
 private:
   NodePtr equation;

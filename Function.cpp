@@ -1,6 +1,7 @@
 //
 //  Copyright © 2017 Lennart Oymanns. All rights reserved.
 //
+#include <algorithm>
 
 #include "Function.hpp"
 #include "Number.hpp"

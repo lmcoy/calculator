@@ -1,0 +1,21 @@
+sudo: disabled
+dist: trusty
+
+language: cpp
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+
+compiler:
+    - clang
+
+before_script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    
+script:
+    - make
+    - ./tests

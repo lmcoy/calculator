@@ -41,7 +41,7 @@ void Equation::WriteInternalRepToStream(std::ostream &s) {
   }
   equation->WriteTreeToStream(s);
 }
-bool Equation::operator==(const Equation::Equation &e) const {
+bool Equation::operator==(const Equation &e) const {
   return equation->equals(e.equation);
 }
 
