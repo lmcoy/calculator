@@ -31,6 +31,20 @@ public:
         exponent->Type() == Node::Type_t::Summand) {
       brackets_e = true;
     }
+    if (base->Type() == Node::Type_t::Number) {
+        auto nb = std::static_pointer_cast<Number>(base);
+        auto r = nb->GetValue();
+        if(r.IsFraction() && r.Denominator() != 1l) {
+            brackets_b = true;
+        }
+    }
+    if (exponent->Type() == Node::Type_t::Number) {
+        auto nb = std::static_pointer_cast<Number>(exponent);
+        auto r = nb->GetValue();
+        if(r.IsFraction() && r.Denominator() != 1l) {
+            brackets_e = true;
+        }
+    }
 
     if (brackets_b) {
       s << "(";
