@@ -19,7 +19,7 @@ public:
 
   virtual NumberRepr NeutralElement() { return NumberRepr(0l); }
 
-  virtual enum Type Type() const { return Node::Type::Summand; }
+  virtual enum Type_t Type() const { return Node::Type_t::Summand; }
 
   virtual void ToStream(std::ostream &s);
 

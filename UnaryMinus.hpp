@@ -17,7 +17,7 @@ public:
   virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
                     bool numeric = false);
 
-  virtual enum Type Type() const { return Node::Type::UnaryMinus; }
+  virtual enum Type_t Type() const { return Node::Type_t::UnaryMinus; }
 
   virtual void ToStream(std::ostream &s) {
     s << "-";
@@ -34,7 +34,7 @@ public:
   virtual bool IsNumber() const { return data->IsNumber(); }
 
   virtual bool equals(NodePtr n) const {
-    if (n->Type() != Node::Type::UnaryMinus) {
+    if (n->Type() != Node::Type_t::UnaryMinus) {
       return false;
     }
     auto un = std::static_pointer_cast<UnaryMinus>(n);

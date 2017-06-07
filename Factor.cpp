@@ -12,8 +12,8 @@ using namespace Equation;
 namespace {
 
 bool comparator(NodePtr &first, NodePtr &second) {
-  if (first->Type() == Node::Type::Number) {
-    if (second->Type() == Node::Type::Number) {
+  if (first->Type() == Node::Type_t::Number) {
+    if (second->Type() == Node::Type_t::Number) {
       auto f = std::static_pointer_cast<Number>(first)->GetValue();
       auto s = std::static_pointer_cast<Number>(second)->GetValue();
       if (f < s) {
@@ -35,7 +35,7 @@ void Factor::ToStream(std::ostream &s) {
       s << " * ";
     }
     bool brackets = false;
-    if (e->Type() == Node::Type::Summand) {
+    if (e->Type() == Node::Type_t::Summand) {
       brackets = true;
     }
     if (brackets) {
@@ -55,7 +55,7 @@ void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
     it2++;
     std::shared_ptr<Node> base;
     NodePtr exponent = std::make_shared<Summand>(std::make_shared<Number>(0l));
-    if ((*it)->Type() == Node::Type::Power) {
+    if ((*it)->Type() == Node::Type_t::Power) {
       auto a = std::static_pointer_cast<Power>(*it);
       base = a->Base();
       auto e = std::static_pointer_cast<Summand>(exponent);
@@ -68,7 +68,7 @@ void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
     for (; it2 != op.end();) {
       std::shared_ptr<Node> base2;
       std::shared_ptr<Node> exp2;
-      if ((*it2)->Type() == Node::Type::Power) {
+      if ((*it2)->Type() == Node::Type_t::Power) {
         auto a = std::static_pointer_cast<Power>(*it2);
         base2 = a->Base();
         exp2 = a->Exponent();
@@ -86,7 +86,7 @@ void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
     }
 
     exponent->Eval(&exponent, state);
-    if (exponent->Type() == Node::Type::Number) {
+    if (exponent->Type() == Node::Type_t::Number) {
       auto number = std::static_pointer_cast<Number>(exponent);
       if (number->GetValue() == NumberRepr(0l)) {
         it = op.erase(it);
@@ -108,7 +108,7 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     return;
   }
 
-  if (base && (*base)->Type() != Node::Type::Factor) {
+  if (base && (*base)->Type() != Node::Type_t::Factor) {
     return;
   }
 
@@ -128,19 +128,19 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
 
 static std::string latex_denom(NodePtr e) {
   std::stringstream s;
-  if (e->Type() == Node::Type::Power) {
+  if (e->Type() == Node::Type_t::Power) {
     auto p = std::static_pointer_cast<Power>(e);
     auto exp = p->Exponent();
     auto base = p->Base();
-    if (exp->Type() == Node::Type::Number) {
+    if (exp->Type() == Node::Type_t::Number) {
       auto nb = std::static_pointer_cast<Number>(exp);
       if (nb->GetValue() < NumberRepr(0l)) {
         auto n = nb->GetValue();
         n *= NumberRepr(-1l);
 
-        bool brackets = base->Type() == Node::Type::Summand ||
-                        base->Type() == Node::Type::Factor ||
-                        base->Type() == Node::Type::Power;
+        bool brackets = base->Type() == Node::Type_t::Summand ||
+                        base->Type() == Node::Type_t::Factor ||
+                        base->Type() == Node::Type_t::Power;
 
         if (brackets) {
           s << "\\left(";
@@ -180,7 +180,7 @@ void Factor::ToLatex(std::ostream &s) {
     }
 
     bool brackets = false;
-    if (e->Type() == Node::Type::Summand) {
+    if (e->Type() == Node::Type_t::Summand) {
       brackets = true;
     }
     if (brackets) {

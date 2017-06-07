@@ -33,10 +33,10 @@ void Power::writeTreeToStream(std::ostream &s, const std::string &name) {
 void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
   base->Eval(&base, state, numeric);
   exponent->Eval(&exponent, state, numeric);
-  if (base->Type() == Node::Type::Power &&
-      exponent->Type() == Node::Type::Number) {
+  if (base->Type() == Node::Type_t::Power &&
+      exponent->Type() == Node::Type_t::Number) {
     auto b = std::static_pointer_cast<Power>(base);
-    if (b->Exponent()->Type() == Node::Type::Number) {
+    if (b->Exponent()->Type() == Node::Type_t::Number) {
       auto r = std::static_pointer_cast<Number>(b->Exponent());
       auto s = std::static_pointer_cast<Number>(exponent);
       auto nr = r->GetValue();
@@ -50,8 +50,8 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
       }
     }
   }
-  if (base->Type() == Node::Type::Number &&
-      exponent->Type() == Node::Type::Number) {
+  if (base->Type() == Node::Type_t::Number &&
+      exponent->Type() == Node::Type_t::Number) {
     auto ptr1 = std::static_pointer_cast<Number>(base);
     auto ptr2 = std::static_pointer_cast<Number>(exponent);
     auto a = ptr1->GetValue();

@@ -29,7 +29,7 @@ public:
     }
   }
 
-  virtual enum Type Type() const { return Node::Type::Number; }
+  virtual enum Type_t Type() const { return Node::Type_t::Number; }
 
   NumberRepr GetValue() const { return value; }
 
@@ -40,7 +40,7 @@ public:
   virtual bool IsNumber() const { return true; }
 
   virtual bool equals(NodePtr n) const {
-    if (n->Type() != Node::Type::Number) {
+    if (n->Type() != Node::Type_t::Number) {
       return false;
     }
     auto number = std::static_pointer_cast<Number>(n);

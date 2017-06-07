@@ -14,7 +14,7 @@ void TwoOp::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
 
   NumberRepr value = NeutralElement();
   for (auto it = op1.begin(); it != op1.end();) {
-    if ((*it)->Type() == Node::Type::Number) {
+    if ((*it)->Type() == Node::Type_t::Number) {
       auto ptr = std::static_pointer_cast<Number>(*it);
       value = Operation1(value, ptr->GetValue());
       it = op1.erase(it);

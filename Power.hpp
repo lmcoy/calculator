@@ -16,19 +16,19 @@ public:
   virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
                     bool numeric = false);
 
-  virtual enum Type Type() const { return Node::Type::Power; }
+  virtual enum Type_t Type() const { return Node::Type_t::Power; }
 
   virtual void ToStream(std::ostream &s) {
     bool brackets_b = false;
-    if (base->Type() == Node::Type::Factor ||
-        base->Type() == Node::Type::Power ||
-        base->Type() == Node::Type::Summand) {
+    if (base->Type() == Node::Type_t::Factor ||
+        base->Type() == Node::Type_t::Power ||
+        base->Type() == Node::Type_t::Summand) {
       brackets_b = true;
     }
     bool brackets_e = false;
-    if (exponent->Type() == Node::Type::Factor ||
-        exponent->Type() == Node::Type::Power ||
-        exponent->Type() == Node::Type::Summand) {
+    if (exponent->Type() == Node::Type_t::Factor ||
+        exponent->Type() == Node::Type_t::Power ||
+        exponent->Type() == Node::Type_t::Summand) {
       brackets_e = true;
     }
 
@@ -51,18 +51,18 @@ public:
 
   virtual void ToLatex(std::ostream &s) {
     bool brackets_b = false;
-    if (base->Type() == Node::Type::Factor ||
-        base->Type() == Node::Type::Power ||
-        base->Type() == Node::Type::Summand) {
+    if (base->Type() == Node::Type_t::Factor ||
+        base->Type() == Node::Type_t::Power ||
+        base->Type() == Node::Type_t::Summand) {
       brackets_b = true;
     }
     bool brackets_e = false;
-    if (exponent->Type() == Node::Type::Factor ||
-        exponent->Type() == Node::Type::Power ||
-        exponent->Type() == Node::Type::Summand) {
+    if (exponent->Type() == Node::Type_t::Factor ||
+        exponent->Type() == Node::Type_t::Power ||
+        exponent->Type() == Node::Type_t::Summand) {
       brackets_e = true;
     }
-    if (exponent->Type() == Node::Type::Number) {
+    if (exponent->Type() == Node::Type_t::Number) {
       auto number = std::static_pointer_cast<Number>(exponent);
       if (number->GetValue() < NumberRepr(0l)) {
         brackets_e = true;
@@ -93,7 +93,7 @@ public:
   }
 
   virtual bool equals(NodePtr n) const {
-    if (n->Type() != Node::Type::Power) {
+    if (n->Type() != Node::Type_t::Power) {
       return false;
     }
     auto un = std::static_pointer_cast<Power>(n);

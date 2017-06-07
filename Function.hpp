@@ -18,7 +18,7 @@ public:
 
   void AddArg(NodePtr ptr) { args.push_back(ptr); }
 
-  virtual enum Type Type() const { return Node::Type::Function; }
+  virtual enum Type_t Type() const { return Node::Type_t::Function; }
 
   virtual void ToStream(std::ostream &s);
 

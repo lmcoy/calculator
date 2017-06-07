@@ -27,7 +27,7 @@ NodePtr UserFunction::Eval(const std::list<NodePtr> &args, bool numeric) {
 
   bool num = true;
   for (const auto &a : args) {
-    if (a->Type() == Node::Type::Number) {
+    if (a->Type() == Node::Type_t::Number) {
       const auto n = std::static_pointer_cast<Number>(a);
       dargs.push_back(n->GetValue());
     } else {

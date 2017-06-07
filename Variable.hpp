@@ -23,7 +23,7 @@ public:
     }
   }
 
-  virtual enum Type Type() const { return Node::Type::Variable; }
+  virtual enum Type_t Type() const { return Node::Type_t::Variable; }
 
   virtual void ToStream(std::ostream &s) { s << vname; }
 
@@ -34,7 +34,7 @@ public:
   virtual bool IsNumber() const { return false; }
 
   virtual bool equals(NodePtr n) const {
-    if (n->Type() != Node::Type::Variable) {
+    if (n->Type() != Node::Type_t::Variable) {
       return false;
     }
     auto un = std::static_pointer_cast<Variable>(n);

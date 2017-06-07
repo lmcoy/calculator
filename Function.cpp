@@ -85,7 +85,7 @@ void Function::ToLatex(std::ostream &s) {
 }
 
 bool Function::equals(NodePtr n) const {
-  if (n->Type() != Node::Type::Function) {
+  if (n->Type() != Node::Type_t::Function) {
     return false;
   }
   auto un = std::static_pointer_cast<Function>(n);

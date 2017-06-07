@@ -19,7 +19,7 @@ void UnaryMinus::writeTreeToStream(std::ostream &s, const std::string &name) {
 void UnaryMinus::Eval(NodePtr *base, std::shared_ptr<State> state,
                       bool numeric) {
   data->Eval(&data, state, numeric);
-  if (data->Type() == Node::Type::Number) {
+  if (data->Type() == Node::Type_t::Number) {
     auto ptr = std::static_pointer_cast<Number>(data);
     auto value = ptr->GetValue();
 

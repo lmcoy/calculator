@@ -21,7 +21,7 @@ typedef std::shared_ptr<Node> NodePtr;
 
 class Node {
 public:
-  enum class Type {
+  enum class Type_t {
     Number,
     Summand,
     Factor,
@@ -33,7 +33,7 @@ public:
   virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
                     bool numeric = false) = 0;
 
-  virtual Type Type() const = 0;
+  virtual enum Type_t Type() const = 0;
   virtual ~Node() {}
 
   virtual std::string ToString() {
