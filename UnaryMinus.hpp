@@ -43,6 +43,10 @@ public:
     return data->equals(un->data);
   }
 
+  virtual NodePtr clone() const {
+    return std::make_shared<UnaryMinus>(data->clone());
+  }
+
 private:
   NodePtr data;
 };

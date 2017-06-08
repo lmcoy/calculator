@@ -41,6 +41,8 @@ public:
     return un && vname == un->vname;
   }
 
+  virtual NodePtr clone() const { return std::make_shared<Variable>(vname); }
+
 private:
   std::string vname;
 };

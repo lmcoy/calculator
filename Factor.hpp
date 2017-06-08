@@ -13,6 +13,8 @@ class Factor : public TwoOp {
 public:
   Factor(NodePtr node) : TwoOp(node, "*") {}
 
+  Factor(const Factor &o) : TwoOp(o) {}
+
   virtual NumberRepr Operation1(NumberRepr base, NumberRepr n) {
     return base * n;
   }
@@ -29,6 +31,8 @@ public:
                     bool numeric = false);
 
   bool HasFactor(NodePtr f) { return false; }
+
+  virtual NodePtr clone() const { return std::make_shared<Factor>(*this); }
 
 private:
   void simplify(std::list<NodePtr> &op, std::shared_ptr<State> state);

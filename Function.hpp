@@ -13,6 +13,13 @@ class Function : public Node {
 public:
   Function(std::string n) : fname(n) {}
 
+  Function(const std::string &n, const std::list<NodePtr> a) {
+    fname = n;
+    for (auto &e : a) {
+      args.push_back(e->clone());
+    }
+  }
+
   virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
                     bool numeric = false);
 
@@ -29,6 +36,10 @@ public:
   virtual bool IsNumber() const { return false; }
 
   virtual bool equals(NodePtr n) const;
+
+  virtual NodePtr clone() const {
+    return std::make_shared<Function>(fname, args);
+  }
 
 private:
   std::list<NodePtr> args;

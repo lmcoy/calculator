@@ -59,6 +59,8 @@ public:
   bool operator==(const NodePtr n) const { return equals(n); }
 
   virtual bool equals(NodePtr n) const = 0;
+
+  virtual NodePtr clone() const = 0;
 };
 } // namespace Equation
 

@@ -125,6 +125,10 @@ public:
   NodePtr Base() { return base; }
   NodePtr Exponent() { return exponent; }
 
+  virtual NodePtr clone() const {
+    return std::make_shared<Power>(base->clone(), exponent->clone());
+  }
+
 private:
   NodePtr base;
   NodePtr exponent;

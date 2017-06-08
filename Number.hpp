@@ -50,6 +50,8 @@ public:
 
   virtual void ToLatex(std::ostream &s) { value.ToLatex(s); }
 
+  virtual NodePtr clone() const { return std::make_shared<Number>(value); }
+
 private:
   NumberRepr value;
 };

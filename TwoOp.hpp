@@ -5,8 +5,8 @@
 #ifndef TwoOp_hpp
 #define TwoOp_hpp
 
-#include <list>
 #include <algorithm>
+#include <list>
 
 #include "Node.hpp"
 #include "NumberRepr.hpp"
@@ -18,6 +18,13 @@ public:
   TwoOp(NodePtr node, const std::string &operator1) {
     op1.push_back(node);
     o1 = operator1;
+  }
+
+  TwoOp(const TwoOp &o) {
+    o1 = o.o1;
+    for (const auto &e : o.op1) {
+      op1.push_back(e->clone());
+    }
   }
 
   ~TwoOp() {}

@@ -13,6 +13,8 @@ class Summand : public TwoOp {
 public:
   Summand(NodePtr node) : TwoOp(node, "+") {}
 
+  Summand(const Summand &o) : TwoOp(o) {}
+
   virtual NumberRepr Operation1(NumberRepr base, NumberRepr n) {
     return base + n;
   }
@@ -24,6 +26,8 @@ public:
   virtual void ToStream(std::ostream &s);
 
   virtual void ToLatex(std::ostream &s);
+
+  virtual NodePtr clone() const { return std::make_shared<Summand>(*this); }
 };
 } // namespace Equation
 
