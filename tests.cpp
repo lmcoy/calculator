@@ -83,6 +83,7 @@ TEST(Equation, Summand) {
   EQUATION_EXPECT_EQUAL("x+x+y+2*y-z", "2*x+3*y-z");
   EQUATION_EXPECT_EQUAL("x-x+y-2*y-z", "-y-z");
   EQUATION_EXPECT_EQUAL("1/2*x+x/2", "x");
+  EQUATION_EXPECT_EQUAL("x-2*x", "-x");
 }
 
 TEST(Equation, Latex) {

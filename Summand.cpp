@@ -135,10 +135,16 @@ void Summand::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     return;
   }
 
-  if (minus) {
-    auto t = std::make_shared<Summand>(*this);
+  if (base && minus) {
+    NodePtr t;
+    if (op1.size() > 1) {
+      t = std::make_shared<Summand>(*this);
+    } else {
+      t = op1.front();
+    }
     auto un = std::make_shared<UnaryMinus>(t);
     *base = un;
+    return;
   }
 
   if (base && op1.size() == 1) {
