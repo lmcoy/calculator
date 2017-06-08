@@ -74,6 +74,17 @@ TEST(Equation, Power) {
   EQUATION_EXPECT_EQUAL("4*x", "x*4");
 }
 
+TEST(Equation, Summand) {
+  EQUATION_EXPECT_EQUAL("x-x", "0");
+  EQUATION_EXPECT_EQUAL("x+x", "2*x");
+  EQUATION_EXPECT_EQUAL("4*x^2+5*x^2", "9*x^2");
+  EQUATION_EXPECT_EQUAL("(x+1)+(x+1)+(x+1)", "3*(x+1)");
+  EQUATION_EXPECT_EQUAL("x+x+y+2*y+z", "2*x+3*y+z");
+  EQUATION_EXPECT_EQUAL("x+x+y+2*y-z", "2*x+3*y-z");
+  EQUATION_EXPECT_EQUAL("x-x+y-2*y-z", "-y-z");
+  EQUATION_EXPECT_EQUAL("1/2*x+x/2", "x");
+}
+
 TEST(Equation, Latex) {
   EXPECT_EQ(Eq("x / y").ToLatex(), "\\frac{x}{y}");
   EXPECT_EQ(Eq("x / y^3").ToLatex(), "\\frac{x}{y^{3}}");

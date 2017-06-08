@@ -46,6 +46,8 @@ public:
   virtual NodePtr clone() const {
     return std::make_shared<UnaryMinus>(data->clone());
   }
+  virtual const NodePtr &Data() const { return data; }
+  virtual NodePtr &Data() { return data; }
 
 private:
   NodePtr data;

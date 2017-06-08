@@ -41,6 +41,12 @@ pi
 2
 > 3^2
 9
+> x+x
+2 * x
+> x-x
+0
+> (1/2)*x+x/2
+x
 ```
 
 calculatorf

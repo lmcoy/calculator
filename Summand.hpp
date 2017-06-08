@@ -27,7 +27,13 @@ public:
 
   virtual void ToLatex(std::ostream &s);
 
+  virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
+                    bool numeric = false);
+
   virtual NodePtr clone() const { return std::make_shared<Summand>(*this); }
+
+private:
+  void simplify(bool *minus);
 };
 } // namespace Equation
 

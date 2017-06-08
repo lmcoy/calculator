@@ -69,6 +69,10 @@ public:
     return true;
   }
 
+  const std::list<NodePtr> &Data() const { return op1; }
+
+  std::list<NodePtr> &Data() { return op1; }
+
 protected:
   std::list<NodePtr> op1;
   std::string o1;
