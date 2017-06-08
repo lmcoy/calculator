@@ -82,10 +82,7 @@ public:
       auto b = n.value_num * value_denom;
       return a < b;
     }
-    if (!isFraction && !n.isFraction) {
-      return value_double < n.value_double;
-    }
-    return false;
+    return value_double < n.value_double;
   }
 
   bool operator>(const NumberRepr &n) {
