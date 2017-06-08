@@ -24,6 +24,8 @@ public:
     data->ToStream(s);
   }
 
+  virtual void ToStreamAbs(std::ostream &s) { data->ToStream(s); }
+
   virtual void ToLatex(std::ostream &s) {
     s << "-";
     data->ToLatex(s);
