@@ -99,7 +99,11 @@ public:
 
   void ToLatex(std::ostream &s) const {
     if (IsFraction()) {
-      s << "\\frac{" << value_num << "}{" << value_denom << "}";
+      if (value_denom != 1l) {
+        s << "\\frac{" << value_num << "}{" << value_denom << "}";
+      } else {
+        s << value_num;
+      }
       return;
     }
     s << value_double;

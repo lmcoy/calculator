@@ -96,10 +96,30 @@ TEST(Equation, Latex) {
   EXPECT_EQ(Eq("x / y").ToLatex(), "\\frac{x}{y}");
   EXPECT_EQ(Eq("x / y^3").ToLatex(), "\\frac{x}{y^{3}}");
   EXPECT_EQ(Eq("x / (y+1)^3 * 6 /3").ToLatex(),
-            "\\frac{2x}{\\left(y + \\frac{1}{1}\\right)^{3}}");
+            "\\frac{2x}{\\left(y + 1\\right)^{3}}");
   EXPECT_EQ(Eq("x^(-1)").ToLatex(), "x^{-1}");
   EXPECT_EQ(Eq("2^-1").ToLatex(), "\\frac{1}{2}");
   EXPECT_EQ(Eq("x/y/z/a").ToLatex(), "\\frac{x}{y z a}");
+  EXPECT_EQ(Eq("-x").ToLatex(), "-x");
+  EXPECT_EQ(Eq("x*(-y)").ToLatex(), "-xy");
+  EXPECT_EQ(Eq("x/(-y)").ToLatex(), "-\\frac{x}{y}");
+  EXPECT_EQ(Eq("x/(-y)+z/(-a)").ToLatex(), "-\\frac{x}{y} -\\frac{z}{a}");
+  EXPECT_EQ(Eq("x + y -z").ToLatex(), "x + y -z");
+}
+
+TEST(Equation, ToString) {
+  EXPECT_EQ(Eq("x / y").ToString(), "x * y ^ (-1)");
+  EXPECT_EQ(Eq("x / y^3").ToString(), "x * y ^ (-3)");
+  EXPECT_EQ(Eq("x / (y+1)^3 * 6 /3").ToString(), "2 * x * (y + 1) ^ (-3)");
+  EXPECT_EQ(Eq("x^(-1)").ToString(), "x ^ (-1)");
+  EXPECT_EQ(Eq("2^-1").ToString(), "1 / 2");
+  EXPECT_EQ(Eq("x/y/z/a").ToString(), "x * y ^ (-1) * z ^ (-1) * a ^ (-1)");
+  EXPECT_EQ(Eq("-x").ToString(), "-x");
+  EXPECT_EQ(Eq("x*(-y)").ToString(), "-x * y");
+  EXPECT_EQ(Eq("x/(-y)").ToString(), "-x * y ^ (-1)");
+  EXPECT_EQ(Eq("x/(-y)+z/(-a)").ToString(), "-x * y ^ (-1) -z * a ^ (-1)");
+  EXPECT_EQ(Eq("x + y -z").ToString(), "x + y -z");
+  EXPECT_EQ(Eq("x*8 + 4-3-4*x^2").ToString(), "8 * x - 4 * x ^ 2 + 1");
 }
 
 TEST(Equation, SinSpecialValues) {

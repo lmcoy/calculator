@@ -15,13 +15,33 @@ void Summand::ToStream(std::ostream &s) {
   int i = 0;
   for (auto &e : op1) {
     if (i != 0) {
-      if (e->Type() != Node::Type_t::UnaryMinus) {
-        s << " + ";
-        e->ToStream(s);
-      } else {
+      if (e->Type() == Node::Type_t::UnaryMinus) {
         s << " - ";
         auto un = std::static_pointer_cast<UnaryMinus>(e);
         un->ToStreamAbs(s);
+      } else if (e->Type() == Node::Type_t::Factor) {
+        auto factor = std::static_pointer_cast<Factor>(e);
+        auto pre = factor->Data().begin();
+        if ((*pre)->Type() == Node::Type_t::Number) {
+          auto nb = std::static_pointer_cast<Number>(*pre);
+          if (nb->GetValue() < NumberRepr(0l)) {
+            s << " ";
+            e->ToStream(s);
+          }
+        }
+      } else if (e->Type() == Node::Type_t::Number) {
+        auto nb = std::static_pointer_cast<Number>(e);
+        auto r = nb->GetValue();
+        if (nb->GetValue() < NumberRepr(0l)) {
+          s << " - ";
+          r *= NumberRepr(-1l);
+        } else {
+          s << " + ";
+        }
+        s << r.String();
+      } else {
+        s << " + ";
+        e->ToStream(s);
       }
     } else {
       e->ToStream(s);
@@ -34,9 +54,27 @@ void Summand::ToLatex(std::ostream &s) {
   int i = 0;
   for (auto &e : op1) {
     if (i != 0) {
-      s << " + ";
+      if (e->Type() == Node::Type_t::UnaryMinus) {
+        s << " - ";
+        auto un = std::static_pointer_cast<UnaryMinus>(e);
+        un->ToStreamAbs(s);
+      } else if (e->Type() == Node::Type_t::Factor) {
+        auto factor = std::static_pointer_cast<Factor>(e);
+        auto pre = factor->Data().begin();
+        if ((*pre)->Type() == Node::Type_t::Number) {
+          auto nb = std::static_pointer_cast<Number>(*pre);
+          if (nb->GetValue() < NumberRepr(0l)) {
+            s << " ";
+            e->ToLatex(s);
+          }
+        }
+      } else {
+        s << " + ";
+        e->ToLatex(s);
+      }
+    } else {
+      e->ToLatex(s);
     }
-    e->ToLatex(s);
     i += 1;
   }
 }

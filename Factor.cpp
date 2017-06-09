@@ -36,6 +36,13 @@ void Factor::ToStream(std::ostream &s) {
     if (nb->GetValue() == NumberRepr(-1l)) {
       s << "-";
       it++;
+    } else if (nb->GetValue() < NumberRepr(-1l)) {
+      auto r = nb->GetValue();
+      r *= NumberRepr(-1l);
+      s << "- ";
+      s << r.String();
+      s << " * ";
+      it++;
     }
   }
   for (; it != op1.end(); it++) {
@@ -205,7 +212,16 @@ void Factor::ToLatex(std::ostream &s) {
   }
   std::stringstream num;
   std::string denom = "";
-  for (auto &e : op1) {
+  auto it = op1.begin();
+  if ((*it)->Type() == Node::Type_t::Number) {
+    auto nb = std::static_pointer_cast<Number>(*it);
+    if (nb->GetValue() < NumberRepr(0l)) {
+      s << "-";
+      it++;
+    }
+  }
+  for (; it != op1.end(); it++) {
+    const NodePtr &e = *it;
 
     auto d = latex_denom(e);
     if (d.size() > 0) {
@@ -223,7 +239,20 @@ void Factor::ToLatex(std::ostream &s) {
     if (brackets) {
       num << "\\left(";
     }
-    e->ToStream(num);
+    if (e->Type() == Node::Type_t::Number) {
+      auto nb = std::static_pointer_cast<Number>(e);
+      if (nb->GetValue() == NumberRepr(-1l)) {
+
+      } else if (nb->GetValue() < NumberRepr(-1l)) {
+        auto r = nb->GetValue();
+        r *= NumberRepr(-1l);
+        r.ToLatex(num);
+      } else {
+        e->ToLatex(num);
+      }
+    } else {
+      e->ToLatex(num);
+    }
     if (brackets) {
       num << "\\right)";
     }
