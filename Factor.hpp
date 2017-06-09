@@ -15,6 +15,8 @@ public:
 
   Factor(const Factor &o) : TwoOp(o) {}
 
+  Factor() : TwoOp("*") {}
+
   virtual NumberRepr Operation1(NumberRepr base, NumberRepr n) {
     return base * n;
   }

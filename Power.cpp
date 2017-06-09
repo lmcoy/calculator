@@ -3,6 +3,7 @@
 //
 #include <cmath>
 
+#include "Factor.hpp"
 #include "Number.hpp"
 #include "Power.hpp"
 
@@ -33,6 +34,7 @@ void Power::writeTreeToStream(std::ostream &s, const std::string &name) {
 void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
   base->Eval(&base, state, numeric);
   exponent->Eval(&exponent, state, numeric);
+  // evaluate (x^s)^r
   if (base->Type() == Node::Type_t::Power &&
       exponent->Type() == Node::Type_t::Number) {
     auto b = std::static_pointer_cast<Power>(base);
@@ -50,6 +52,7 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
       }
     }
   }
+  // evaluate if base and exponent are numbers
   if (base->Type() == Node::Type_t::Number &&
       exponent->Type() == Node::Type_t::Number) {
     auto ptr1 = std::static_pointer_cast<Number>(base);
@@ -61,5 +64,18 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
     if (newnumber.IsValid()) {
       ba->reset(new Number(newnumber));
     }
+  }
+  // split (x*y)^n to x^n*y^n
+  if (base->Type() == Node::Type_t::Factor) {
+    auto factor = std::static_pointer_cast<Factor>(base);
+    auto newfactor = std::make_shared<Factor>();
+    for (auto &f : factor->Data()) {
+      auto pow = std::make_shared<Power>(f, exponent->clone());
+      auto parent = std::static_pointer_cast<Node>(pow);
+      pow->Eval(&parent, state, numeric);
+      newfactor->AddOp1(parent);
+    }
+    *ba = newfactor;
+    return;
   }
 }

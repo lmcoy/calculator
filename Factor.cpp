@@ -103,6 +103,16 @@ void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
 
 void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
   TwoOp::Eval(base, state, numeric);
+  // if a child is also a Factor, move elements to this Factor
+  std::list<NodePtr> n;
+  for (auto it = op1.begin(); it != op1.end(); it++) {
+    if ((*it)->Type() == Node::Type_t::Factor) {
+      auto fact = std::static_pointer_cast<Factor>(*it);
+      n.insert(n.end(), fact->Data().begin(), fact->Data().end());
+      it = op1.erase(it);
+    }
+  }
+  op1.insert(op1.end(), n.begin(), n.end());
 
   if ((*base).get() != this) {
     return;

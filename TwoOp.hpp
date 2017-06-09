@@ -27,6 +27,8 @@ public:
     }
   }
 
+  explicit TwoOp(const std::string &operator1) { o1 = operator1; }
+
   ~TwoOp() {}
 
   virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
