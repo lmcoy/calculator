@@ -79,6 +79,9 @@ target_link_libraries(calculator calc)
 add_executable(calculatorf calculatorf.cpp)
 target_link_libraries(calculatorf calc)
 
+add_executable(writetree writetree.cpp)
+target_link_libraries(writetree calc)
+
 add_executable(tests tests.cpp)
 target_link_libraries(tests gtest_main calc)
 add_test(NAME example_tests COMMAND tests)
