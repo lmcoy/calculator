@@ -63,6 +63,7 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
     auto newnumber = NumberRepr::Pow(a, b);
     if (newnumber.IsValid()) {
       ba->reset(new Number(newnumber));
+      return;
     }
   }
   // split (x*y)^n to x^n*y^n
