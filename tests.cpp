@@ -74,6 +74,10 @@ TEST(Equation, Power) {
   EQUATION_EXPECT_EQUAL("4*x", "x*4");
   EQUATION_EXPECT_EQUAL("x^2/(2*x)", "1/2*x");
   EQUATION_EXPECT_EQUAL("(x*y)^2", "x^2*y^2");
+  EQUATION_EXPECT_EQUAL("x*(-y)*(-z)", "x*y*z");
+  EQUATION_EXPECT_EQUAL("-x*(-y)*(-z)", "-x*y*z");
+  EQUATION_EXPECT_EQUAL("(-x)*(-y)*(-z)", "-x*y*z");
+  EQUATION_EXPECT_EQUAL("(-x)*(-y)*(-z)", "-(x*y*z)");
 }
 
 TEST(Equation, Summand) {

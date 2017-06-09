@@ -33,7 +33,7 @@ public:
   virtual NodePtr clone() const { return std::make_shared<Summand>(*this); }
 
 private:
-  void simplify(bool *minus);
+  void simplify();
 };
 } // namespace Equation
 

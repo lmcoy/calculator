@@ -3,6 +3,7 @@
 //
 
 #include "UnaryMinus.hpp"
+#include "Factor.hpp"
 #include "Number.hpp"
 
 using namespace Equation;
@@ -26,5 +27,13 @@ void UnaryMinus::Eval(NodePtr *base, std::shared_ptr<State> state,
     value *= NumberRepr(-1l);
 
     base->reset(new Number(value));
+    return;
   }
+  auto factor = std::make_shared<Factor>();
+  factor->AddOp1(std::make_shared<Number>(NumberRepr(-1l)));
+  factor->AddOp1(data);
+
+  auto node = std::static_pointer_cast<Node>(factor);
+  node->Eval(&node, state, numeric);
+  *base = node;
 }

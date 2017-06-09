@@ -30,7 +30,16 @@ bool comparator(NodePtr &first, NodePtr &second) {
 void Factor::ToStream(std::ostream &s) {
 
   int i = 0;
-  for (auto &e : op1) {
+  auto it = op1.begin();
+  if ((*it)->Type() == Node::Type_t::Number) {
+    auto nb = std::static_pointer_cast<Number>(*it);
+    if (nb->GetValue() == NumberRepr(-1l)) {
+      s << "-";
+      it++;
+    }
+  }
+  for (; it != op1.end(); it++) {
+    const NodePtr &e = *it;
     if (i != 0) {
       s << " * ";
     }
@@ -105,11 +114,13 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
   TwoOp::Eval(base, state, numeric);
   // if a child is also a Factor, move elements to this Factor
   std::list<NodePtr> n;
-  for (auto it = op1.begin(); it != op1.end(); it++) {
+  for (auto it = op1.begin(); it != op1.end();) {
     if ((*it)->Type() == Node::Type_t::Factor) {
       auto fact = std::static_pointer_cast<Factor>(*it);
       n.insert(n.end(), fact->Data().begin(), fact->Data().end());
       it = op1.erase(it);
+    } else {
+      it++;
     }
   }
   op1.insert(op1.end(), n.begin(), n.end());
@@ -120,6 +131,22 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
 
   if (base && (*base)->Type() != Node::Type_t::Factor) {
     return;
+  }
+
+  // evaluate numerical factors (only necessary if n.size() > 0
+  NumberRepr value = NeutralElement();
+  for (auto it = op1.begin(); it != op1.end() && n.size() > 0;) {
+    if ((*it)->Type() == Node::Type_t::Number) {
+      auto ptr = std::static_pointer_cast<Number>(*it);
+      value = Operation1(value, ptr->GetValue());
+      it = op1.erase(it);
+    } else {
+      it++;
+    }
+  }
+  if (value != NeutralElement()) {
+    auto newnumber = std::make_shared<Number>(value);
+    op1.push_back(newnumber);
   }
 
   simplify(op1, state);

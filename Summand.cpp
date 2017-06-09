@@ -76,7 +76,7 @@ std::pair<NumberRepr, NodePtr> clone_expr_wo_coeff(NodePtr n) {
   return std::pair<NumberRepr, NodePtr>(NumberRepr(1l), n->clone());
 }
 
-void Summand::simplify(bool *minus) {
+void Summand::simplify() {
   std::list<std::pair<NumberRepr, NodePtr>> polynom;
   for (auto &e : op1) {
     auto nom = clone_expr_wo_coeff(e);
@@ -92,15 +92,11 @@ void Summand::simplify(bool *minus) {
   }
   // fill new summands
   op1.clear();
-  *minus = false;
   for (auto &e : polynom) {
     if (e.first == NumberRepr(1l)) {
       op1.push_back(e.second);
     } else if (e.first == NumberRepr(0l)) {
       continue;
-    } else if (e.first == NumberRepr(-1l)) {
-      op1.push_back(e.second);
-      *minus = true;
     } else {
       auto coeff = std::make_shared<Number>(e.first);
       std::shared_ptr<Factor> factor;
@@ -127,23 +123,10 @@ void Summand::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     return;
   }
 
-  bool minus = false;
-  simplify(&minus);
+  simplify();
 
   if (base && op1.size() == 0) {
     base->reset(new Number(0l));
-    return;
-  }
-
-  if (base && minus) {
-    NodePtr t;
-    if (op1.size() > 1) {
-      t = std::make_shared<Summand>(*this);
-    } else {
-      t = op1.front();
-    }
-    auto un = std::make_shared<UnaryMinus>(t);
-    *base = un;
     return;
   }
 
