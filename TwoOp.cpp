@@ -38,7 +38,7 @@ void TwoOp::writeTreeToStream(std::ostream &s, const std::string &name) {
   std::stringstream ss;
   ss << NeutralElement();
   s << name << "[label=<" << type << ", " << ss.str() << ">]\n";
-  for (int i = 0; i < op1.size(); i++) {
+  for (size_t i = 0; i < op1.size(); i++) {
     std::stringstream cname;
     cname << name << "l" << i;
     s << name << " -> " << cname.str() << " [label=\"" << o1 << "\"];\n";

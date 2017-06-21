@@ -54,7 +54,7 @@ private:
   std::string readString();
 
   std::string expression;
-  int index = 0;
+  size_t index = 0;
 };
 } // namespace Equation
 

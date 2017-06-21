@@ -29,7 +29,7 @@ private:
 
   std::vector<Token> tokens;
   static const Token NoToken;
-  int index = 0;
+  size_t index = 0;
 };
 } // namespace Equation
 
