@@ -119,6 +119,16 @@ void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
 
 void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
   TwoOp::Eval(base, state, numeric);
+
+  // check if this is still the same Factor object after TwoOp::Eval.
+  if ((*base).get() != this) {
+    return;
+  }
+
+  if (base && (*base)->Type() != Node::Type_t::Factor) {
+    return;
+  }
+
   // if a child is also a Factor, move elements to this Factor
   std::list<NodePtr> n;
   for (auto it = op1.begin(); it != op1.end();) {
@@ -131,14 +141,6 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     }
   }
   op1.insert(op1.end(), n.begin(), n.end());
-
-  if ((*base).get() != this) {
-    return;
-  }
-
-  if (base && (*base)->Type() != Node::Type_t::Factor) {
-    return;
-  }
 
   // evaluate numerical factors (only necessary if n.size() > 0
   NumberRepr value = NeutralElement();
