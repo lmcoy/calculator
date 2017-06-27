@@ -28,6 +28,9 @@ void Summand::ToStream(std::ostream &s) {
             s << " ";
             e->ToStream(s);
           }
+        } else {
+            s << " + ";
+            e->ToStream(s);
         }
       } else if (e->Type() == Node::Type_t::Number) {
         auto nb = std::static_pointer_cast<Number>(e);
