@@ -71,6 +71,29 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 set (CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(SANITIZE_ADDRESS "Enable AddressSanitizer." Off)
+option(SANITIZE_THREAD "Enable ThreadSanitizer." Off)
+option(SANITIZE_MEMORY "Enable MemorySanitizer." Off)
+
+if ( (SANITIZE_ADDRESS AND SANITIZE_THREAD) OR (SANITIZE_ADDRESS AND SANITIZE_MEMORY) OR (SANITIZE_THREAD AND SANITIZE_MEMORY))
+    message(FATAL_ERROR  "Cannot combine two sanitizer")
+endif ()
+
+if(SANITIZE_ADDRESS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -ggdb -fsanitize=address -fsanitize-coverage=trace-pc")
+    set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -std=c++11 -ggdb -fsanitize=address -fsanitize-coverage=trace-pc")
+endif()
+
+if(SANITIZE_MEMORY)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdc=c++11 -ggdb -fsanitize=memory")
+    set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -std=c++11 -ggdb -fsanitize=memory")
+endif()
+
+if(SANITIZE_THREAD)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -ggdb -fsanitize=thread")
+    set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -std=c++11 -ggdb -fsanitize=thread")
+endif()
+
 add_library(calc STATIC ${SRC} ${HEADER})
 
 add_executable(calculator calculator.cpp)
