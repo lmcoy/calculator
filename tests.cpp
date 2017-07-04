@@ -160,3 +160,25 @@ TEST(Equation, CosNumeric) {
   EXPECT_DOUBLE_EQ(atof(evalf("cos(1)").c_str()), cos(1));
   EXPECT_DOUBLE_EQ(atof(evalf("cos(pi+0.1)").c_str()), cos(M_PI + 0.1));
 }
+
+TEST(Equation, Imaginary) {
+    EQUATION_EXPECT_EQUAL("i^2", "-1");
+    EQUATION_EXPECT_EQUAL("i^3", "-i");
+    EQUATION_EXPECT_EQUAL("i^4", "1");
+    EQUATION_EXPECT_EQUAL("i^5", "i");
+    EQUATION_EXPECT_EQUAL("i^6", "-1");
+    EQUATION_EXPECT_EQUAL("i^7", "-i");
+    EQUATION_EXPECT_EQUAL("i^8", "1");
+    EQUATION_EXPECT_EQUAL("i^9", "i");
+    
+    EQUATION_EXPECT_EQUAL("i^(-2)", "-1");
+    EQUATION_EXPECT_EQUAL("i^(-3)", "-1/i");
+    EQUATION_EXPECT_EQUAL("i^(-4)", "1");
+    EQUATION_EXPECT_EQUAL("i^(-5)", "1/i");
+    EQUATION_EXPECT_EQUAL("i^(-6)", "-1");
+    EQUATION_EXPECT_EQUAL("i^(-7)", "-1/i");
+    EQUATION_EXPECT_EQUAL("i^(-8)", "1");
+    EQUATION_EXPECT_EQUAL("i^(-9)", "1/i");
+    
+    EQUATION_EXPECT_EQUAL("(x*i)^2", "-x^2");
+}
