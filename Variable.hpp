@@ -43,6 +43,8 @@ public:
 
   virtual NodePtr clone() const { return std::make_shared<Variable>(vname); }
 
+  std::string Name() const { return vname; }
+
 private:
   std::string vname;
 };

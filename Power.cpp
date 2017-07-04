@@ -6,6 +6,7 @@
 #include "Factor.hpp"
 #include "Number.hpp"
 #include "Power.hpp"
+#include "Variable.hpp"
 
 using namespace Equation;
 
@@ -64,6 +65,44 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
     if (newnumber.IsValid()) {
       ba->reset(new Number(newnumber));
       return;
+    }
+  }
+  // imaginary i
+  if (base->Type() == Node::Type_t::Variable &&
+      exponent->Type() == Node::Type_t::Number) {
+    auto var = std::static_pointer_cast<Variable>(base);
+    auto e = std::static_pointer_cast<Number>(exponent);
+    auto ex = e->GetValue();
+    if (var->Name() == "i" && ex.IsFraction() && ex.Denominator() == 1l) {
+      auto numabs = std::abs(ex.Numerator());
+      NodePtr imag;
+      if (ex.Numerator() > 0) {
+        imag = std::make_shared<Variable>("i");
+      } else {
+        imag = std::make_shared<Power>(std::make_shared<Variable>("i"),
+                                       std::make_shared<Number>(-1l));
+      }
+
+      if ((numabs - 1l) % 4 == 0) {
+        *ba = imag;
+        return;
+      }
+      if ((numabs - 1l) % 4 == 2) {
+        auto newfactor = std::make_shared<Factor>();
+        newfactor->AddOp1(std::make_shared<Number>(-1l));
+        newfactor->AddOp1(imag);
+        *ba = newfactor;
+        return;
+      }
+
+      if ((numabs - 1l) % 4 == 1) {
+        *ba = std::make_shared<Number>(-1l);
+        return;
+      }
+      if ((numabs - 1l) % 4 == 3) {
+        *ba = std::make_shared<Number>(1l);
+        return;
+      }
     }
   }
   // split (x*y)^n to x^n*y^n

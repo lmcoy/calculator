@@ -113,7 +113,9 @@ void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
         continue;
       }
     }
-    *it = std::make_shared<Power>(base, exponent);
+    NodePtr n = std::make_shared<Power>(base, exponent);
+    n->Eval(&n, state);
+    *it = n;
   }
 }
 
