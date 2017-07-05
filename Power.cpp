@@ -112,9 +112,11 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
     for (auto &f : factor->Data()) {
       auto pow = std::make_shared<Power>(f, exponent->clone());
       auto parent = std::static_pointer_cast<Node>(pow);
-      pow->Eval(&parent, state, numeric);
+      parent->Eval(&parent, state, numeric);
       newfactor->AddOp1(parent);
     }
+    auto eval = std::static_pointer_cast<Node>(newfactor);
+    eval->Eval(&eval, state, numeric);
     *ba = newfactor;
     return;
   }

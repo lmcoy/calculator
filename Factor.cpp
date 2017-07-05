@@ -172,6 +172,12 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     return;
   }
   op1.sort(comparator);
+  if ((*op1.begin())->Type() == Node::Type_t::Number) {
+    auto nb = std::static_pointer_cast<Number>(*op1.begin());
+    if (nb->GetValue() == NumberRepr(1l)) {
+      op1.pop_front();
+    }
+  }
 }
 
 static std::string latex_denom(NodePtr e) {
