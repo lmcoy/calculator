@@ -117,7 +117,7 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
     }
     auto eval = std::static_pointer_cast<Node>(newfactor);
     eval->Eval(&eval, state, numeric);
-    *ba = newfactor;
+    *ba = eval;
     return;
   }
 }

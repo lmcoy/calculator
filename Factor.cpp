@@ -1,6 +1,7 @@
 //
 //  Copyright © 2017 Lennart Oymanns. All rights reserved.
 //
+#include <cassert>
 
 #include "Factor.hpp"
 #include "Number.hpp"
@@ -28,7 +29,7 @@ bool comparator(NodePtr &first, NodePtr &second) {
 } // namespace
 
 void Factor::ToStream(std::ostream &s) {
-
+  assert(op1.size() > 0);
   int i = 0;
   auto it = op1.begin();
   if ((*it)->Type() == Node::Type_t::Number) {
@@ -66,7 +67,7 @@ void Factor::ToStream(std::ostream &s) {
 }
 
 void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
-  for (auto it = op.begin(); it != op.end(); it++) {
+  for (auto it = op.begin(); it != op.end();) {
     auto it2 = it;
     it2++;
     std::shared_ptr<Node> base;
@@ -110,12 +111,14 @@ void Factor::simplify(std::list<NodePtr> &op, std::shared_ptr<State> state) {
       }
       if (number->GetValue() == NumberRepr(1l)) {
         *it = base;
+        it++;
         continue;
       }
     }
     NodePtr n = std::make_shared<Power>(base, exponent);
     n->Eval(&n, state);
     *it = n;
+    it++;
   }
 }
 
