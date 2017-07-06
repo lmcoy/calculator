@@ -182,3 +182,8 @@ TEST(Equation, Imaginary) {
     
     EQUATION_EXPECT_EQUAL("(x*i)^2", "-x^2");
 }
+
+TEST(Equation, UnaryMinus) {
+    EQUATION_EXPECT_EQUAL("6/-x*y", "-6*y/x");
+
+}

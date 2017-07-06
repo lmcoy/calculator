@@ -117,7 +117,7 @@ NodePtr Parser::parseNumber() {
     return v;
   }
   if (token.Type == Token::Type_t::Operator && token.Value == "-") {
-    return std::make_shared<UnaryMinus>(parseFactor());
+    return std::make_shared<UnaryMinus>(parsePower());
   }
 
   if (token.Type == Token::Type_t::String) {
