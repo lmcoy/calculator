@@ -118,7 +118,7 @@ NumberRepr NumberRepr::Pow(const NumberRepr &base, const NumberRepr &exp) {
       return inv;
     }
 
-    unsigned e = abs_enum.convert_to<unsigned>();
+    unsigned e = abs_enum.template convert_to<unsigned>();
     auto rat = base.rational;
     Rational_t result_num =
         boost::multiprecision::pow(boost::multiprecision::numerator(rat), e);
