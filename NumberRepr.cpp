@@ -10,60 +10,29 @@
 
 using namespace Equation;
 
-namespace {
-long gcd(long a, long b) {
-  while (b != 0) {
-    long h = a % b;
-    a = b;
-    b = h;
-  }
-  return a;
-}
-} // namespace
-
 NumberRepr::NumberRepr() {
   value_double = 0.0;
-  value_num = 0l;
-  value_denom = 1l;
   isValid = false;
+  rational = Rational_t(0);
 }
+
 NumberRepr::NumberRepr(const std::string &s) {
-  value_double = strtod(s.c_str(), NULL);
-
-  char *end;
-  value_num = strtol(s.c_str(), &end, 10);
-  value_denom = 1l;
-
-  if (*end == '\0') {
+  auto dot_pos = s.find_first_of("eE.");
+  if (dot_pos != std::string::npos) {
+    value_double = strtod(s.c_str(), NULL);
+    isFraction = false;
+  } else {
+    rational = Integer_t(s);
     isFraction = true;
   }
+  isValid = true;
 }
 
 void NumberRepr::SetFromInt(long num, long denom) {
   isFraction = true;
-  bool negative = false;
-  if (num < 0l) {
-    negative = true;
-    num *= -1l;
-  }
-  if (denom < 0) {
-    if (negative) {
-      negative = false;
-    } else {
-      negative = true;
-    }
-    denom *= -1l;
-  }
+  rational = Rational_t(num, denom);
 
-  long g = gcd(num, denom);
-  value_num = num / g;
-  value_denom = denom / g;
-
-  value_double = static_cast<double>(num) / static_cast<double>(denom);
-  if (negative) {
-    value_num *= -1l;
-    value_double *= -1.0;
-  }
+  value_double = 0.0;
   if (denom == 0) {
     isValid = false;
   } else {
@@ -76,10 +45,10 @@ NumberRepr &NumberRepr::operator*=(const NumberRepr &rhs) {
     isValid = false;
   }
   if (rhs.isFraction && isFraction) {
-    SetFromInt(value_num * rhs.value_num, value_denom * rhs.value_denom);
+    rational *= rhs.rational;
     return *this;
   }
-  SetFromDouble(value_double * rhs.value_double);
+  SetFromDouble(Double() * rhs.Double());
   return *this;
 }
 
@@ -88,14 +57,14 @@ NumberRepr &NumberRepr::operator/=(const NumberRepr &rhs) {
     isValid = false;
   }
   if (isFraction && rhs.isFraction) {
-    if (rhs.value_num == 0l) {
+    if (rhs.rational == Rational_t(0)) {
       isValid = false;
       return *this;
     }
-    SetFromInt(value_num * rhs.value_denom, value_denom * rhs.value_num);
+    rational /= rhs.rational;
     return *this;
   }
-  SetFromDouble(value_double / rhs.value_double);
+  SetFromDouble(Double() / rhs.Double());
   return *this;
 }
 
@@ -104,12 +73,10 @@ NumberRepr &NumberRepr::operator+=(const NumberRepr &rhs) {
     isValid = false;
   }
   if (rhs.isFraction && isFraction) {
-    long denom = value_denom * rhs.value_denom;
-    long num = value_num * rhs.value_denom + rhs.value_num * value_denom;
-    SetFromInt(num, denom);
+    rational += rhs.rational;
     return *this;
   }
-  SetFromDouble(value_double + rhs.value_double);
+  SetFromDouble(Double() + rhs.Double());
   return *this;
 }
 
@@ -118,12 +85,10 @@ NumberRepr &NumberRepr::operator-=(const NumberRepr &rhs) {
     isValid = false;
   }
   if (rhs.isFraction && isFraction) {
-    long denom = value_denom * rhs.value_denom;
-    long num = value_num * rhs.value_denom - rhs.value_num * value_denom;
-    SetFromInt(num, denom);
+    rational -= rhs.rational;
     return *this;
   }
-  SetFromDouble(value_double - rhs.value_double);
+  SetFromDouble(Double() - rhs.Double());
   return *this;
 }
 
@@ -134,35 +99,108 @@ std::ostream &operator<<(std::ostream &os, const NumberRepr &obj) {
 
 NumberRepr NumberRepr::Pow(const NumberRepr &base, const NumberRepr &exp) {
   if (!base.isValid || !exp.isValid) {
-    auto inv = NumberRepr(pow(base.Double(), exp.Double()));
+    auto inv = NumberRepr(0l);
     inv.isValid = false;
     return inv;
   }
   if (!base.IsFraction() || !exp.IsFraction()) {
-    return NumberRepr(pow(base.Double(), exp.Double()));
+    double b = base.Double();
+    double e = exp.Double();
+    return NumberRepr(pow(b, e));
   }
-  if (base.IsFraction() && exp.value_denom == 1l) {
-    long abs_enum = std::abs(exp.value_num);
-    long result_num = 1l;
-    long result_denom = 1l;
-    long expo = abs_enum;
-    long b_n = base.value_num;
-    long b_d = base.value_denom;
-    while (expo) {
-      if (expo & 1) {
-        result_num *= b_n;
-        result_denom *= b_d;
-      }
-      expo >>= 1;
-      b_n *= b_n;
-      b_d *= b_d;
+  if (base.IsFraction() && exp.Denominator() == Integer_t(1)) {
+    auto abs_enum = boost::multiprecision::abs(exp.Numerator());
+    if (abs_enum >
+        Integer_t(
+            100)) { // if the exponent is too large, return a invalid number
+      auto inv = NumberRepr(0l);
+      inv.isValid = false;
+      return inv;
     }
-    if (exp.value_num >= 0) {
-      return NumberRepr(result_num, result_denom);
+
+    unsigned e = abs_enum.convert_to<unsigned>();
+    auto rat = base.rational;
+    Rational_t result_num =
+        boost::multiprecision::pow(boost::multiprecision::numerator(rat), e);
+    Rational_t result_denom =
+        boost::multiprecision::pow(boost::multiprecision::denominator(rat), e);
+
+    if (exp.Numerator() >= Integer_t(0)) {
+      Rational_t res = result_num / result_denom;
+      return NumberRepr(res);
     }
-    return NumberRepr(result_denom, result_num);
+    Rational_t res = result_denom / result_num;
+    return NumberRepr(res);
   }
   auto inv = NumberRepr(pow(base.Double(), exp.Double()));
   inv.isValid = false;
   return inv;
+}
+
+double NumberRepr::Double() const {
+  if (isFraction) {
+    return rational.convert_to<double>();
+  }
+  return value_double;
+}
+
+std::string NumberRepr::String() const {
+  if (!isValid) {
+    return "nan";
+  }
+  std::stringstream ss;
+  if (isFraction) {
+    ss << Numerator().str();
+    if (Denominator() != Integer_t(1)) {
+      ss << " / " << Denominator().str();
+    }
+    return ss.str();
+  }
+  ss << std::setprecision(17) << Double();
+  return ss.str();
+}
+
+bool NumberRepr::operator==(const NumberRepr &n) const {
+  if (!isValid || !n.isValid) {
+    return false;
+  }
+  if (isFraction && n.isFraction) {
+    return rational == n.rational;
+  }
+  if (!isFraction && !n.isFraction) {
+    return Double() == n.Double();
+  }
+  return false;
+}
+
+void NumberRepr::ToLatex(std::ostream &s) const {
+  if (IsFraction()) {
+    if (Denominator() != Integer_t(1)) {
+      s << "\\frac{" << Numerator() << "}{" << Denominator() << "}";
+    } else {
+      s << Numerator();
+    }
+    return;
+  }
+  s << Double();
+}
+
+bool NumberRepr::operator<(const NumberRepr &n) {
+  if (!isValid || !n.isValid) {
+    return false;
+  }
+  if (isFraction && n.isFraction) {
+    return rational < n.rational;
+  }
+  return Double() < n.Double();
+}
+
+bool NumberRepr::operator>(const NumberRepr &n) {
+  if (*this < n) {
+    return false;
+  }
+  if (*this == n) {
+    return false;
+  }
+  return true;
 }

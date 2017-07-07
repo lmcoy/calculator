@@ -45,8 +45,10 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
       auto nr = r->GetValue();
       auto ns = s->GetValue();
       if (nr.IsFraction() && ns.IsFraction()) {
-        if (std::abs(nr.Denominator()) % 2 == 1 &&
-            std::abs(ns.Denominator()) % 2 == 1) {
+        if (boost::multiprecision::abs(nr.Denominator()) % Integer_t(2) ==
+                Integer_t(1) &&
+            boost::multiprecision::abs(ns.Denominator()) % Integer_t(2) ==
+                Integer_t(1)) {
           base = b->Base();
           exponent = std::make_shared<Number>(nr * ns);
         }
@@ -74,20 +76,21 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
     auto e = std::static_pointer_cast<Number>(exponent);
     auto ex = e->GetValue();
     if (var->Name() == "i" && ex.IsFraction() && ex.Denominator() == 1l) {
-      auto numabs = std::abs(ex.Numerator());
+      auto numabs = boost::multiprecision::abs(ex.Numerator());
       NodePtr imag;
-      if (ex.Numerator() > 0) {
+      if (ex.Numerator() > Integer_t(0)) {
         imag = std::make_shared<Variable>("i");
       } else {
         imag = std::make_shared<Power>(std::make_shared<Variable>("i"),
                                        std::make_shared<Number>(-1l));
       }
 
-      if ((numabs - 1l) % 4 == 0) {
+      Integer_t tmp = (numabs - Integer_t(1)) % Integer_t(4);
+      if (tmp == Integer_t(0)) {
         *ba = imag;
         return;
       }
-      if ((numabs - 1l) % 4 == 2) {
+      if (tmp == Integer_t(2)) {
         auto newfactor = std::make_shared<Factor>();
         newfactor->AddOp1(std::make_shared<Number>(-1l));
         newfactor->AddOp1(imag);
@@ -95,11 +98,11 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
         return;
       }
 
-      if ((numabs - 1l) % 4 == 1) {
+      if (tmp == Integer_t(1)) {
         *ba = std::make_shared<Number>(-1l);
         return;
       }
-      if ((numabs - 1l) % 4 == 3) {
+      if (tmp == Integer_t(3)) {
         *ba = std::make_shared<Number>(1l);
         return;
       }

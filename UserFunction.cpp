@@ -18,17 +18,17 @@ NodePtr UserFunction::Eval(const std::list<NodePtr> &args, bool numeric) {
     return result;
   }
 
-  if (!numeric) {
-    return 0;
-  }
-
   std::vector<NumberRepr> dargs;
   dargs.reserve(args.size());
 
   bool num = true;
+  bool real_values = true;
   for (const auto &a : args) {
     if (a->Type() == Node::Type_t::Number) {
       const auto n = std::static_pointer_cast<Number>(a);
+      if (n->GetValue().IsFraction()) {
+        real_values = false;
+      }
       dargs.push_back(n->GetValue());
     } else {
       num = false;
@@ -37,7 +37,9 @@ NodePtr UserFunction::Eval(const std::list<NodePtr> &args, bool numeric) {
   }
 
   if (num) {
-    return EvalNum(dargs);
+    if (numeric || real_values) {
+      return EvalNum(dargs);
+    }
   }
 
   return 0;

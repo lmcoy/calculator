@@ -71,6 +71,9 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 set (CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+FIND_PACKAGE(Boost REQUIRED)
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+
 option(SANITIZE_ADDRESS "Enable AddressSanitizer." Off)
 option(SANITIZE_THREAD "Enable ThreadSanitizer." Off)
 option(SANITIZE_MEMORY "Enable MemorySanitizer." Off)
