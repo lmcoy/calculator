@@ -3,7 +3,14 @@
 std::string eval(const std::string &expression) {
   Equation::Equation eq;
   eq.Set(expression);
-  return eq.Evaluate();
+  std::string expr = "";
+  try {
+    expr = eq.Evaluate();
+  } catch (const std::exception &e) {
+    expr = "error: ";
+    expr += e.what();
+  }
+  return expr;
 }
 
 int main(int argc, char *argv[]) {
