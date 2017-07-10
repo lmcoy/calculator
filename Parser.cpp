@@ -132,7 +132,11 @@ NodePtr Parser::parseNumber() {
   }
 
   if (token.Type == Token::Type_t::Number) {
-    return std::make_shared<Number>(Number(token.Value));
+    try {
+      return std::make_shared<Number>(Number(token.Value));
+    } catch (const std::exception &e) {
+      throw InputEquationError(token.pos, e.what());
+    }
   }
 
   if (token.Type == Token::Type_t::End) {
