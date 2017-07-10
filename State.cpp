@@ -12,11 +12,9 @@ NodePtr State::EvalFunction(const std::string &name,
                             const std::list<NodePtr> &x, bool numeric) {
   auto it = funcs.find(name);
   if (it == funcs.end()) {
-    std::cerr << "error: unknown function" << name << "\n";
     return 0;
   }
   if (it->second->NumArgs() != x.size()) {
-    std::cerr << "error: wrong number of function arguments\n";
     return 0;
   }
   return it->second->Eval(x, numeric);
