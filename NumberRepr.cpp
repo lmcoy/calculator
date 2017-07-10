@@ -109,10 +109,9 @@ NumberRepr NumberRepr::Pow(const NumberRepr &base, const NumberRepr &exp) {
     return NumberRepr(pow(b, e));
   }
   if (base.IsFraction() && exp.Denominator() == Integer_t(1)) {
-    auto abs_enum = boost::multiprecision::abs(exp.Numerator());
-    if (abs_enum >
-        Integer_t(
-            100)) { // if the exponent is too large, return a invalid number
+    Integer_t abs_enum = boost::multiprecision::abs(exp.Numerator());
+    if (abs_enum > Integer_t(100)) { 
+      // if the exponent is too large, return a invalid number
       auto inv = NumberRepr(0l);
       inv.isValid = false;
       return inv;
