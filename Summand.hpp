@@ -15,6 +15,8 @@ public:
 
   Summand(const Summand &o) : TwoOp(o) {}
 
+  Summand() : TwoOp("+") {}
+
   virtual NumberRepr Operation1(NumberRepr base, NumberRepr n) {
     return base + n;
   }

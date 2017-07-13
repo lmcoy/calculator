@@ -17,9 +17,16 @@ public:
 
   virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
                     bool numeric = false) {
-    if (numeric && state->IsVariable(vname)) {
-      auto result = state->GetVariable(vname);
-      base->reset(new Number(result));
+
+    if (state->IsVariable(vname)) {
+      auto n = state->GetVariable(vname)->clone();
+      if (n->Type() == Node::Type_t::Number) {
+        auto number = std::static_pointer_cast<Number>(n);
+        if (!number->GetValue().IsFraction() && !numeric) {
+          return;
+        }
+      }
+      *base = n;
     }
   }
 

@@ -3,6 +3,8 @@
 //
 #include <cmath>
 
+#include "Error.h"
+#include "Number.hpp"
 #include "State.hpp"
 #include "UserFunction.hpp"
 
@@ -15,7 +17,7 @@ NodePtr State::EvalFunction(const std::string &name,
     return 0;
   }
   if (it->second->NumArgs() != x.size()) {
-    return 0;
+    throw InputError(0, "wrong number of arguments");
   }
   return it->second->Eval(x, numeric);
 }
@@ -30,11 +32,10 @@ bool State::IsVariable(const std::string &name) {
   return !(it == variables.end());
 }
 
-NumberRepr State::GetVariable(const std::string &name) {
+NodePtr State::GetVariable(const std::string &name) {
   auto it = variables.find(name);
   if (it == variables.end()) {
-    std::cerr << "error: unknown variable " << name << "\n";
-    return NumberRepr(-1.0);
+    throw InputError(0, "unknown variable");
   }
   return it->second;
 }
@@ -42,6 +43,7 @@ NumberRepr State::GetVariable(const std::string &name) {
 DefaultState::DefaultState() {
   funcs["sin"] = std::make_shared<FuncSin>();
   funcs["cos"] = std::make_shared<FuncCos>();
+  funcs["D"] = std::make_shared<Derivative>();
 
-  variables["pi"] = NumberRepr(M_PI);
+  variables["pi"] = std::make_shared<Number>(M_PI);
 }

@@ -162,28 +162,37 @@ TEST(Equation, CosNumeric) {
 }
 
 TEST(Equation, Imaginary) {
-    EQUATION_EXPECT_EQUAL("i^2", "-1");
-    EQUATION_EXPECT_EQUAL("i^3", "-i");
-    EQUATION_EXPECT_EQUAL("i^4", "1");
-    EQUATION_EXPECT_EQUAL("i^5", "i");
-    EQUATION_EXPECT_EQUAL("i^6", "-1");
-    EQUATION_EXPECT_EQUAL("i^7", "-i");
-    EQUATION_EXPECT_EQUAL("i^8", "1");
-    EQUATION_EXPECT_EQUAL("i^9", "i");
-    
-    EQUATION_EXPECT_EQUAL("i^(-2)", "-1");
-    EQUATION_EXPECT_EQUAL("i^(-3)", "-1/i");
-    EQUATION_EXPECT_EQUAL("i^(-4)", "1");
-    EQUATION_EXPECT_EQUAL("i^(-5)", "1/i");
-    EQUATION_EXPECT_EQUAL("i^(-6)", "-1");
-    EQUATION_EXPECT_EQUAL("i^(-7)", "-1/i");
-    EQUATION_EXPECT_EQUAL("i^(-8)", "1");
-    EQUATION_EXPECT_EQUAL("i^(-9)", "1/i");
-    
-    EQUATION_EXPECT_EQUAL("(x*i)^2", "-x^2");
+  EQUATION_EXPECT_EQUAL("i^2", "-1");
+  EQUATION_EXPECT_EQUAL("i^3", "-i");
+  EQUATION_EXPECT_EQUAL("i^4", "1");
+  EQUATION_EXPECT_EQUAL("i^5", "i");
+  EQUATION_EXPECT_EQUAL("i^6", "-1");
+  EQUATION_EXPECT_EQUAL("i^7", "-i");
+  EQUATION_EXPECT_EQUAL("i^8", "1");
+  EQUATION_EXPECT_EQUAL("i^9", "i");
+
+  EQUATION_EXPECT_EQUAL("i^(-2)", "-1");
+  EQUATION_EXPECT_EQUAL("i^(-3)", "-1/i");
+  EQUATION_EXPECT_EQUAL("i^(-4)", "1");
+  EQUATION_EXPECT_EQUAL("i^(-5)", "1/i");
+  EQUATION_EXPECT_EQUAL("i^(-6)", "-1");
+  EQUATION_EXPECT_EQUAL("i^(-7)", "-1/i");
+  EQUATION_EXPECT_EQUAL("i^(-8)", "1");
+  EQUATION_EXPECT_EQUAL("i^(-9)", "1/i");
+
+  EQUATION_EXPECT_EQUAL("(x*i)^2", "-x^2");
 }
 
-TEST(Equation, UnaryMinus) {
-    EQUATION_EXPECT_EQUAL("6/-x*y", "-6*y/x");
+TEST(Equation, UnaryMinus) { EQUATION_EXPECT_EQUAL("6/-x*y", "-6*y/x"); }
 
+TEST(Equation, Derivative) {
+  EQUATION_EXPECT_EQUAL("D(3,x)", "0");
+  EQUATION_EXPECT_EQUAL("D(20.0,x)", "0");
+  EQUATION_EXPECT_EQUAL("D(x,x)", "1");
+  EQUATION_EXPECT_EQUAL("D(3*x,x)", "3");
+  EQUATION_EXPECT_EQUAL("D(3*x^2,x)", "6*x");
+  EQUATION_EXPECT_EQUAL("D(3*x^2 + 4*x + 3,x)", "6*x+4");
+  EQUATION_EXPECT_EQUAL("D(sin(x),x)", "cos(x)");
+  EQUATION_EXPECT_EQUAL("D(sin(5*x),x)", "5*cos(5*x)");
+  EQUATION_EXPECT_EQUAL("D(cos(5*x^2),x)", "-10*x*sin(5*x^2)");
 }

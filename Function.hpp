@@ -41,6 +41,9 @@ public:
     return std::make_shared<Function>(fname, args);
   }
 
+  virtual std::string Name() const { return fname; }
+  virtual const std::list<NodePtr> &Args() const { return args; }
+
 private:
   std::list<NodePtr> args;
   std::string fname;

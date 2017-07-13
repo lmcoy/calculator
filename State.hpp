@@ -27,15 +27,15 @@ public:
 
   NodePtr EvalFunction(const std::string &name, const std::list<NodePtr> &x,
                        bool numeric);
-  NumberRepr GetVariable(const std::string &name);
+  NodePtr GetVariable(const std::string &name);
 
-  void SetVariable(const std::string &name, NumberRepr value) {
+  void SetVariable(const std::string &name, NodePtr value) {
     variables[name] = value;
   }
 
 protected:
   std::map<std::string, std::shared_ptr<UserFunction>> funcs;
-  std::map<std::string, NumberRepr> variables;
+  std::map<std::string, NodePtr> variables;
 };
 
 class DefaultState : public State {
