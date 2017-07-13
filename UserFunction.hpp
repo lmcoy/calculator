@@ -39,7 +39,7 @@ class UserFunction {
 public:
   virtual NodePtr Eval(const std::list<NodePtr> &args, bool numeric = false);
 
-  virtual NodePtr EvalNum(const std::vector<NumberRepr> &args) = 0;
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args) = 0;
   virtual bool SpecialValues(const std::list<NodePtr> &args,
                              NodePtr *result) = 0;
   virtual size_t NumArgs() const = 0;
@@ -49,7 +49,7 @@ public:
 
 class FuncSin : public UserFunction {
 public:
-  virtual NodePtr EvalNum(const std::vector<NumberRepr> &args);
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
   virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
   virtual size_t NumArgs() const { return 1; }
 
@@ -58,12 +58,57 @@ public:
 
 class FuncCos : public UserFunction {
 public:
-  virtual NodePtr EvalNum(const std::vector<NumberRepr> &args);
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
   virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
   virtual size_t NumArgs() const { return 1; }
 
   static std::list<std::pair<NodePtr, std::string>> svalues;
 };
+    
+    class FuncTan : public UserFunction {
+    public:
+        virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+        virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
+        virtual size_t NumArgs() const { return 1; }
+        
+        static std::list<std::pair<NodePtr, std::string>> svalues;
+    };
+    
+    class FuncASin : public UserFunction {
+    public:
+        virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+        virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
+        virtual size_t NumArgs() const { return 1; }
+        
+        static std::list<std::pair<NodePtr, std::string>> svalues;
+    };
+    
+    class FuncACos : public UserFunction {
+    public:
+        virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+        virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
+        virtual size_t NumArgs() const { return 1; }
+        
+        static std::list<std::pair<NodePtr, std::string>> svalues;
+    };
+    
+    class FuncATan : public UserFunction {
+    public:
+        virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+        virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
+        virtual size_t NumArgs() const { return 1; }
+        
+        static std::list<std::pair<NodePtr, std::string>> svalues;
+    };
+    
+    class FuncExp : public UserFunction {
+    public:
+        virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+        virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
+        virtual size_t NumArgs() const { return 1; }
+        
+        static std::list<std::pair<NodePtr, std::string>> svalues;
+    };
 
 class Derivative : public UserFunction {
 public:
@@ -71,7 +116,7 @@ public:
   virtual size_t NumArgs() const { return 2; }
   virtual NodePtr Eval(const std::list<NodePtr> &args, bool numeric = false);
 
-  virtual NodePtr EvalNum(const std::vector<NumberRepr> &args) { return 0; }
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args) { return 0; }
   virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
     return false;
   }

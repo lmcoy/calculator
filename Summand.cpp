@@ -27,6 +27,9 @@ void Summand::ToStream(std::ostream &s) {
           if (nb->GetValue() < NumberRepr(0l)) {
             s << " ";
             e->ToStream(s);
+          } else {
+            s << " + ";
+            e->ToStream(s);
           }
         } else {
           s << " + ";

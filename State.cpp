@@ -43,6 +43,11 @@ NodePtr State::GetVariable(const std::string &name) {
 DefaultState::DefaultState() {
   funcs["sin"] = std::make_shared<FuncSin>();
   funcs["cos"] = std::make_shared<FuncCos>();
+  funcs["tan"] = std::make_shared<FuncTan>();
+  funcs["asin"] = std::make_shared<FuncASin>();
+  funcs["acos"] = std::make_shared<FuncACos>();
+  funcs["atan"] = std::make_shared<FuncATan>();
+  funcs["exp"] = std::make_shared<FuncExp>();
   funcs["D"] = std::make_shared<Derivative>();
 
   variables["pi"] = std::make_shared<Number>(M_PI);

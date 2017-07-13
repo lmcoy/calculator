@@ -2,11 +2,13 @@
 //  Created by Lennart Oymanns on 03.06.17.
 //
 #include <cmath>
+#include <complex>
 
 #include "Error.h"
 #include "Factor.hpp"
 #include "Function.hpp"
 #include "Number.hpp"
+#include "NumberRepr.hpp"
 #include "Parser.hpp"
 #include "Power.hpp"
 #include "State.hpp"
@@ -17,6 +19,85 @@
 
 using namespace Equation;
 
+static NodePtr node_from_complex(std::complex<double> c) {
+  if (c.imag() == 0.0) {
+    return std::make_shared<Number>(c.real());
+  }
+  if (c.real() == 0.0) {
+    auto factor = std::make_shared<Factor>();
+    factor->AddOp1(std::make_shared<Number>(c.imag()));
+    factor->AddOp1(std::make_shared<Variable>("i"));
+    return factor;
+  }
+  auto real = node_from_complex(std::complex<double>(c.real(), 0.0));
+  auto imag = node_from_complex(std::complex<double>(0.0, c.imag()));
+  auto sum = std::make_shared<Summand>();
+  sum->AddOp1(real);
+  sum->AddOp1(imag);
+  return sum;
+}
+
+static std::pair<std::complex<NumberRepr>, bool> complex_number(NodePtr n) {
+  using ret_t = std::pair<std::complex<NumberRepr>, bool>;
+  static const ret_t invalid(std::complex<NumberRepr>(), false);
+  // is real?
+  if (n->Type() == Node::Type_t::Number) {
+    auto nb = std::static_pointer_cast<Number>(n);
+    auto value = std::complex<NumberRepr>(nb->GetValue(), NumberRepr(0l));
+    return ret_t(value, true);
+  }
+  // is imaginary?
+  if (n->Type() == Node::Type_t::Variable) {
+    auto var = std::static_pointer_cast<Variable>(n);
+    if (var->Name() == "i") {
+      auto value = std::complex<NumberRepr>(NumberRepr(0l), NumberRepr(1l));
+      return ret_t(value, true);
+    }
+    return invalid;
+  }
+  if (n->Type() == Node::Type_t::Factor) {
+    auto factor = std::static_pointer_cast<Factor>(n);
+    if (factor->Data().size() != 2) {
+      return invalid;
+    }
+    auto it = factor->Data().begin();
+    if ((*it)->Type() != Node::Type_t::Number) {
+      return invalid;
+    }
+    auto nb = std::static_pointer_cast<Number>(*it);
+    std::advance(it, 1);
+    if ((*it)->Type() != Node::Type_t::Variable) {
+      return invalid;
+    }
+    auto var = std::static_pointer_cast<Variable>(*it);
+    if (var->Name() != "i") {
+      return invalid;
+    }
+    auto value = std::complex<NumberRepr>(NumberRepr(0l), nb->GetValue());
+    return ret_t(value, true);
+  }
+  // is it a + b*i?
+  if (n->Type() == Node::Type_t::Summand) {
+    auto summand = std::static_pointer_cast<Summand>(n);
+    if (summand->Data().size() != 2) {
+      return invalid;
+    }
+    auto it = summand->Data().begin();
+    auto value1 = complex_number(*it);
+    if (value1.second == false) {
+      return invalid;
+    }
+    std::advance(it, 1);
+    auto value2 = complex_number(*it);
+    if (value2.second == false) {
+      return invalid;
+    }
+    return ret_t(value1.first + value2.first, true);
+  }
+
+  return invalid;
+}
+
 NodePtr UserFunction::Eval(const std::list<NodePtr> &args, bool numeric) {
 
   NodePtr result;
@@ -25,21 +106,22 @@ NodePtr UserFunction::Eval(const std::list<NodePtr> &args, bool numeric) {
     return result;
   }
 
-  std::vector<NumberRepr> dargs;
+  std::vector<std::complex<NumberRepr>> dargs;
   dargs.reserve(args.size());
 
   bool num = true;
-  bool real_values = true;
+  bool real_values = false;
   for (const auto &a : args) {
-    if (a->Type() == Node::Type_t::Number) {
-      const auto n = std::static_pointer_cast<Number>(a);
-      if (n->GetValue().IsFraction()) {
-        real_values = false;
-      }
-      dargs.push_back(n->GetValue());
-    } else {
+    auto number = complex_number(a);
+    if (number.second == false) {
       num = false;
       break;
+    } else {
+      dargs.push_back(number.first);
+      if (!number.first.real().IsFraction() ||
+          !number.first.imag().IsFraction()) {
+        real_values = true;
+      }
     }
   }
 
@@ -65,8 +147,10 @@ NodePtr UserFunction::make_node(const std::string &expr) {
   return node;
 }
 
-NodePtr FuncSin::EvalNum(const std::vector<NumberRepr> &args) {
-  return std::make_shared<Number>(sin(args[0].Double()));
+NodePtr FuncSin::EvalNum(const std::vector<std::complex<NumberRepr>> &args) {
+  auto tmp = args[0];
+  std::complex<double> value(tmp.real().Double(), tmp.imag().Double());
+  return node_from_complex(std::sin(value));
 }
 
 std::list<std::pair<NodePtr, std::string>> FuncSin::svalues = {
@@ -89,8 +173,10 @@ bool FuncSin::SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
 
 // --- cos --------------
 
-NodePtr FuncCos::EvalNum(const std::vector<NumberRepr> &args) {
-  return std::make_shared<Number>(cos(args[0].Double()));
+NodePtr FuncCos::EvalNum(const std::vector<std::complex<NumberRepr>> &args) {
+  auto tmp = args[0];
+  std::complex<double> value(tmp.real().Double(), tmp.imag().Double());
+  return node_from_complex(std::cos(value));
 }
 
 std::list<std::pair<NodePtr, std::string>> FuncCos::svalues = {
@@ -101,6 +187,141 @@ std::list<std::pair<NodePtr, std::string>> FuncCos::svalues = {
     {UserFunction::make_node("3*pi/2"), "0"}};
 
 bool FuncCos::SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
+  NodePtr arg0 = *(args.begin());
+  for (auto &s : svalues) {
+    if (s.first->equals(arg0)) {
+      *result = make_node(s.second);
+      return true;
+    }
+  }
+  return false;
+}
+
+// --- tan --------------
+
+NodePtr FuncTan::EvalNum(const std::vector<std::complex<NumberRepr>> &args) {
+  auto tmp = args[0];
+  std::complex<double> value(tmp.real().Double(), tmp.imag().Double());
+  return node_from_complex(std::tan(value));
+}
+
+std::list<std::pair<NodePtr, std::string>> FuncTan::svalues = {
+    {UserFunction::make_node("0"), "0"},
+};
+
+bool FuncTan::SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
+  NodePtr arg0 = *(args.begin());
+  for (auto &s : svalues) {
+    if (s.first->equals(arg0)) {
+      *result = make_node(s.second);
+      return true;
+    }
+  }
+  return false;
+}
+
+// --- asin --------------
+
+NodePtr FuncASin::EvalNum(const std::vector<std::complex<NumberRepr>> &args) {
+  auto tmp = args[0];
+  std::complex<double> value(tmp.real().Double(), tmp.imag().Double());
+  return node_from_complex(std::asin(value));
+}
+
+std::list<std::pair<NodePtr, std::string>> FuncASin::svalues = {
+    {UserFunction::make_node("0"), "0"},
+    {UserFunction::make_node("1"), "pi/2"},
+    {UserFunction::make_node("-1"), "-pi/2"},
+    {UserFunction::make_node("-3^(1/2)/2"), "-pi/3"},
+    {UserFunction::make_node("-2^(1/2)/2"), "-pi/4"},
+    {UserFunction::make_node("-1/2"), "-pi/6"},
+    {UserFunction::make_node("3^(1/2)/2"), "pi/3"},
+    {UserFunction::make_node("2^(1/2)/2"), "pi/4"},
+    {UserFunction::make_node("1/2"), "pi/6"},
+};
+
+bool FuncASin::SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
+  NodePtr arg0 = *(args.begin());
+  for (auto &s : svalues) {
+    if (s.first->equals(arg0)) {
+      *result = make_node(s.second);
+      return true;
+    }
+  }
+  return false;
+}
+
+// --- acos --------------
+
+NodePtr FuncACos::EvalNum(const std::vector<std::complex<NumberRepr>> &args) {
+  auto tmp = args[0];
+  std::complex<double> value(tmp.real().Double(), tmp.imag().Double());
+  return node_from_complex(std::acos(value));
+}
+
+std::list<std::pair<NodePtr, std::string>> FuncACos::svalues = {
+    {UserFunction::make_node("0"), "pi/2"},
+    {UserFunction::make_node("1"), "0"},
+    {UserFunction::make_node("-1"), "pi"},
+    {UserFunction::make_node("-3^(1/2)/2"), "5/6*pi"},
+    {UserFunction::make_node("-2^(1/2)/2"), "3/4*pi"},
+    {UserFunction::make_node("-1/2"), "2/3*pi"},
+    {UserFunction::make_node("3^(1/2)/2"), "pi/6"},
+    {UserFunction::make_node("2^(1/2)/2"), "pi/4"},
+    {UserFunction::make_node("1/2"), "pi/3"},
+};
+
+bool FuncACos::SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
+  NodePtr arg0 = *(args.begin());
+  for (auto &s : svalues) {
+    if (s.first->equals(arg0)) {
+      *result = make_node(s.second);
+      return true;
+    }
+  }
+  return false;
+}
+
+// --- atan --------------
+
+NodePtr FuncATan::EvalNum(const std::vector<std::complex<NumberRepr>> &args) {
+  auto tmp = args[0];
+  std::complex<double> value(tmp.real().Double(), tmp.imag().Double());
+  return node_from_complex(std::atan(value));
+}
+
+std::list<std::pair<NodePtr, std::string>> FuncATan::svalues = {
+    {UserFunction::make_node("0"), "0"},
+};
+
+bool FuncATan::SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
+  NodePtr arg0 = *(args.begin());
+  for (auto &s : svalues) {
+    if (s.first->equals(arg0)) {
+      *result = make_node(s.second);
+      return true;
+    }
+  }
+  return false;
+}
+
+// --- exp --------------
+
+NodePtr FuncExp::EvalNum(const std::vector<std::complex<NumberRepr>> &args) {
+  auto tmp = args[0];
+  std::complex<double> value(tmp.real().Double(), tmp.imag().Double());
+  return node_from_complex(std::exp(value));
+}
+
+std::list<std::pair<NodePtr, std::string>> FuncExp::svalues = {
+    {UserFunction::make_node("0"), "1"},
+    {UserFunction::make_node("2*pi*i"), "1"},
+    {UserFunction::make_node("pi*i"), "-1"},
+    {UserFunction::make_node("1/2*pi*i"), "i"},
+    {UserFunction::make_node("3/2*pi*i"), "-i"},
+};
+
+bool FuncExp::SpecialValues(const std::list<NodePtr> &args, NodePtr *result) {
   NodePtr arg0 = *(args.begin());
   for (auto &s : svalues) {
     if (s.first->equals(arg0)) {

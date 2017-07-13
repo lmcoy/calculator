@@ -141,6 +141,18 @@ TEST(Equation, SinNumeric) {
   EXPECT_DOUBLE_EQ(atof(evalf("sin(pi+0.1)").c_str()), sin(M_PI + 0.1));
 }
 
+TEST(Equation, ExpNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("exp(1)").c_str()), exp(1));
+}
+
+TEST(Equation, Exp) { EQUATION_EXPECT_EQUAL("exp(0)", "1"); }
+
+TEST(Equation, TanNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("tan(0.3)").c_str()), tan(0.3));
+}
+
+TEST(Equation, Tan) { EQUATION_EXPECT_EQUAL("tan(0)", "0"); }
+
 TEST(Equation, CosSpecialValues) {
   EQUATION_EXPECT_EQUAL("cos(0)", "1");
   EQUATION_EXPECT_EQUAL("cos(pi)", "-1");
