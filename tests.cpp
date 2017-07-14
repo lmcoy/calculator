@@ -105,6 +105,12 @@ TEST(Equation, Latex) {
   EXPECT_EQ(Eq("x/(-y)").ToLatex(), "-\\frac{x}{y}");
   EXPECT_EQ(Eq("x/(-y)+z/(-a)").ToLatex(), "-\\frac{x}{y} -\\frac{z}{a}");
   EXPECT_EQ(Eq("x + y -z").ToLatex(), "x + y -z");
+  EXPECT_EQ(Eq("x^y").ToLatex(), "x^y");
+  EXPECT_EQ(Eq("x^(y*z)").ToLatex(), "x^{yz}");
+  EXPECT_EQ(Eq("x^(1/2)").ToLatex(), "\\sqrt{x}");
+  EXPECT_EQ(Eq("x^2").ToLatex(), "x^2");
+  EXPECT_EQ(Eq("x^sin(x)").ToLatex(), "x^{\\sin\\left(x\\right)}");
+  EXPECT_EQ(Eq("x^(1/3)").ToLatex(), "x^\\frac{1}{3}");
 }
 
 TEST(Equation, ToString) {
@@ -120,6 +126,7 @@ TEST(Equation, ToString) {
   EXPECT_EQ(Eq("x/(-y)+z/(-a)").ToString(), "-x * y ^ (-1) -z * a ^ (-1)");
   EXPECT_EQ(Eq("x + y -z").ToString(), "x + y -z");
   EXPECT_EQ(Eq("x*8 + 4-3-4*x^2").ToString(), "8 * x - 4 * x ^ 2 + 1");
+  EXPECT_EQ(eval("5+4*i"), "5 + 4 * i");
 }
 
 TEST(Equation, SinSpecialValues) {

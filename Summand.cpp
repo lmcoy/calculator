@@ -4,12 +4,29 @@
 
 #include <algorithm>
 
+#include "ComplexNumber.hpp"
 #include "Factor.hpp"
 #include "Number.hpp"
 #include "Summand.hpp"
 #include "UnaryMinus.hpp"
 
 using namespace Equation;
+
+static bool comparator_sum(NodePtr &first, NodePtr &second) {
+  auto cplx1 = complex_number(first);
+  if (!cplx1.second) {
+    return false;
+  }
+  auto cplx2 = complex_number(second);
+  if (!cplx2.second) {
+    return false;
+  }
+  if (cplx1.first.imag() == NumberRepr(0l) &&
+      cplx2.first.imag() != NumberRepr(0l)) {
+    return true;
+  }
+  return false;
+}
 
 void Summand::ToStream(std::ostream &s) {
   int i = 0;
@@ -72,6 +89,9 @@ void Summand::ToLatex(std::ostream &s) {
           if (nb->GetValue() < NumberRepr(0l)) {
             s << " ";
             e->ToLatex(s);
+          } else {
+            s << " + ";
+            e->ToStream(s);
           }
         }
       } else {
@@ -178,4 +198,5 @@ void Summand::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     *base = op1.front();
     return;
   }
+  op1.sort(comparator_sum);
 }

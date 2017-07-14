@@ -78,7 +78,7 @@ void Function::ToLatex(std::ostream &s) {
     if (i != 0) {
       s << ", ";
     }
-    a->ToStream(s);
+    a->ToLatex(s);
     i += 1;
   }
   s << "\\right)";

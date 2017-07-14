@@ -181,7 +181,7 @@ void NumberRepr::ToLatex(std::ostream &s) const {
     }
     return;
   }
-  s << Double();
+  s << std::setprecision(17) << Double();
 }
 
 bool NumberRepr::operator<(const NumberRepr &n) {

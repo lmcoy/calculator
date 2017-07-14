@@ -124,3 +124,109 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
     return;
   }
 }
+
+void Power::ToStream(std::ostream &s) {
+  bool brackets_b = false;
+  if (base->Type() == Node::Type_t::Factor ||
+      base->Type() == Node::Type_t::Power ||
+      base->Type() == Node::Type_t::UnaryMinus ||
+      base->Type() == Node::Type_t::Summand) {
+    brackets_b = true;
+  }
+  bool brackets_e = false;
+  if (exponent->Type() == Node::Type_t::Factor ||
+      exponent->Type() == Node::Type_t::Power ||
+      exponent->Type() == Node::Type_t::UnaryMinus ||
+      exponent->Type() == Node::Type_t::Summand) {
+    brackets_e = true;
+  }
+  if (base->Type() == Node::Type_t::Number) {
+    auto nb = std::static_pointer_cast<Number>(base);
+    auto r = nb->GetValue();
+    if (r.IsFraction() && r.Denominator() != 1l) {
+      brackets_b = true;
+    }
+    if (r < NumberRepr(0l)) {
+      brackets_b = true;
+    }
+  }
+  if (exponent->Type() == Node::Type_t::Number) {
+    auto nb = std::static_pointer_cast<Number>(exponent);
+    auto r = nb->GetValue();
+    if (r.IsFraction() && r.Denominator() != 1l) {
+      brackets_e = true;
+    }
+    if (r < NumberRepr(0l)) {
+      brackets_e = true;
+    }
+  }
+
+  if (brackets_b) {
+    s << "(";
+  }
+  base->ToStream(s);
+  if (brackets_b) {
+    s << ")";
+  }
+  s << " ^ ";
+  if (brackets_e) {
+    s << "(";
+  }
+  exponent->ToStream(s);
+  if (brackets_e) {
+    s << ")";
+  }
+}
+
+void Power::ToLatex(std::ostream &s) {
+  bool brackets_b = false;
+  if (base->Type() == Node::Type_t::Factor ||
+      base->Type() == Node::Type_t::Power ||
+      base->Type() == Node::Type_t::Summand) {
+    brackets_b = true;
+  }
+  bool brackets_e = true;
+
+  if (exponent->Type() == Node::Type_t::Number) {
+    auto number = std::static_pointer_cast<Number>(exponent);
+    if (number->GetValue() > NumberRepr(0l)) {
+      // don't use brackets for positive numbers
+      brackets_e = false;
+    }
+    if (number->GetValue() == NumberRepr(Rational_t(1l, 2l))) {
+      // print as sqrt
+      s << "\\sqrt{";
+      base->ToLatex(s);
+      s << "}";
+      return;
+    }
+  }
+  if (exponent->Type() == Node::Type_t::Variable) {
+    // single variable does not need {} in exponent
+    brackets_e = false;
+  }
+
+  if (brackets_b) {
+    s << "\\left(";
+  }
+  base->ToLatex(s);
+  if (brackets_b) {
+    s << "\\right)";
+  }
+  s << "^";
+  if (brackets_e) {
+    s << "{";
+  }
+  exponent->ToLatex(s);
+  if (brackets_e) {
+    s << "}";
+  }
+}
+
+bool Power::equals(NodePtr n) const {
+  if (n->Type() != Node::Type_t::Power) {
+    return false;
+  }
+  auto un = std::static_pointer_cast<Power>(n);
+  return base->equals(un->base) && exponent->equals(un->exponent);
+}

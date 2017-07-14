@@ -18,95 +18,8 @@ public:
 
   virtual enum Type_t Type() const { return Node::Type_t::Power; }
 
-  virtual void ToStream(std::ostream &s) {
-    bool brackets_b = false;
-    if (base->Type() == Node::Type_t::Factor ||
-        base->Type() == Node::Type_t::Power ||
-        base->Type() == Node::Type_t::UnaryMinus ||
-        base->Type() == Node::Type_t::Summand) {
-      brackets_b = true;
-    }
-    bool brackets_e = false;
-    if (exponent->Type() == Node::Type_t::Factor ||
-        exponent->Type() == Node::Type_t::Power ||
-        exponent->Type() == Node::Type_t::UnaryMinus ||
-        exponent->Type() == Node::Type_t::Summand) {
-      brackets_e = true;
-    }
-    if (base->Type() == Node::Type_t::Number) {
-      auto nb = std::static_pointer_cast<Number>(base);
-      auto r = nb->GetValue();
-      if (r.IsFraction() && r.Denominator() != 1l) {
-        brackets_b = true;
-      }
-      if (r < NumberRepr(0l)) {
-        brackets_b = true;
-      }
-    }
-    if (exponent->Type() == Node::Type_t::Number) {
-      auto nb = std::static_pointer_cast<Number>(exponent);
-      auto r = nb->GetValue();
-      if (r.IsFraction() && r.Denominator() != 1l) {
-        brackets_e = true;
-      }
-      if (r < NumberRepr(0l)) {
-        brackets_e = true;
-      }
-    }
-
-    if (brackets_b) {
-      s << "(";
-    }
-    base->ToStream(s);
-    if (brackets_b) {
-      s << ")";
-    }
-    s << " ^ ";
-    if (brackets_e) {
-      s << "(";
-    }
-    exponent->ToStream(s);
-    if (brackets_e) {
-      s << ")";
-    }
-  }
-
-  virtual void ToLatex(std::ostream &s) {
-    bool brackets_b = false;
-    if (base->Type() == Node::Type_t::Factor ||
-        base->Type() == Node::Type_t::Power ||
-        base->Type() == Node::Type_t::Summand) {
-      brackets_b = true;
-    }
-    bool brackets_e = false;
-    if (exponent->Type() == Node::Type_t::Factor ||
-        exponent->Type() == Node::Type_t::Power ||
-        exponent->Type() == Node::Type_t::Summand) {
-      brackets_e = true;
-    }
-    if (exponent->Type() == Node::Type_t::Number) {
-      auto number = std::static_pointer_cast<Number>(exponent);
-      if (number->GetValue() < NumberRepr(0l)) {
-        brackets_e = true;
-      }
-    }
-
-    if (brackets_b) {
-      s << "\\left(";
-    }
-    base->ToStream(s);
-    if (brackets_b) {
-      s << "\\right)";
-    }
-    s << "^";
-    if (brackets_e) {
-      s << "{";
-    }
-    exponent->ToStream(s);
-    if (brackets_e) {
-      s << "}";
-    }
-  }
+  virtual void ToLatex(std::ostream &s);
+  virtual void ToStream(std::ostream &s);
 
   virtual void writeTreeToStream(std::ostream &s, const std::string &name);
 
@@ -114,13 +27,7 @@ public:
     return base->IsNumber() && exponent->IsNumber();
   }
 
-  virtual bool equals(NodePtr n) const {
-    if (n->Type() != Node::Type_t::Power) {
-      return false;
-    }
-    auto un = std::static_pointer_cast<Power>(n);
-    return base->equals(un->base) && exponent->equals(un->exponent);
-  }
+  virtual bool equals(NodePtr n) const;
 
   NodePtr Base() { return base; }
   NodePtr Exponent() { return exponent; }
