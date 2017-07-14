@@ -3,6 +3,7 @@
 //
 #include <cmath>
 
+#include "Derivative.hpp"
 #include "Error.h"
 #include "Number.hpp"
 #include "State.hpp"
