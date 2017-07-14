@@ -47,6 +47,7 @@ NumberRepr.cpp
 UserFunction.cpp
 ComplexNumber.cpp
 Derivative.cpp
+MathFunction.cpp
 )
 
 set(HEADER
@@ -69,6 +70,7 @@ NumberRepr.hpp
 UserFunction.hpp
 ComplexNumber.hpp
 Derivative.hpp
+MathFunction.hpp
 )
 
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)

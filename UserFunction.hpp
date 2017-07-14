@@ -27,69 +27,6 @@ public:
   static NodePtr make_node(const std::string &expr);
 };
 
-class FuncSin : public UserFunction {
-public:
-  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
-  virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
-  virtual size_t NumArgs() const { return 1; }
-
-  static std::list<std::pair<NodePtr, std::string>> svalues;
-};
-
-class FuncCos : public UserFunction {
-public:
-  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
-  virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
-  virtual size_t NumArgs() const { return 1; }
-
-  static std::list<std::pair<NodePtr, std::string>> svalues;
-};
-
-class FuncTan : public UserFunction {
-public:
-  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
-  virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
-  virtual size_t NumArgs() const { return 1; }
-
-  static std::list<std::pair<NodePtr, std::string>> svalues;
-};
-
-class FuncASin : public UserFunction {
-public:
-  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
-  virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
-  virtual size_t NumArgs() const { return 1; }
-
-  static std::list<std::pair<NodePtr, std::string>> svalues;
-};
-
-class FuncACos : public UserFunction {
-public:
-  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
-  virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
-  virtual size_t NumArgs() const { return 1; }
-
-  static std::list<std::pair<NodePtr, std::string>> svalues;
-};
-
-class FuncATan : public UserFunction {
-public:
-  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
-  virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
-  virtual size_t NumArgs() const { return 1; }
-
-  static std::list<std::pair<NodePtr, std::string>> svalues;
-};
-
-class FuncExp : public UserFunction {
-public:
-  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
-  virtual bool SpecialValues(const std::list<NodePtr> &args, NodePtr *result);
-  virtual size_t NumArgs() const { return 1; }
-
-  static std::list<std::pair<NodePtr, std::string>> svalues;
-};
-
 } // namespace Equation
 
 #endif /* UserFunction_hpp */

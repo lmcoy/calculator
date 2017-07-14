@@ -5,6 +5,7 @@
 
 #include "Derivative.hpp"
 #include "Error.h"
+#include "MathFunction.hpp"
 #include "Number.hpp"
 #include "State.hpp"
 #include "UserFunction.hpp"

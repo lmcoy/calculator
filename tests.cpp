@@ -148,17 +148,61 @@ TEST(Equation, SinNumeric) {
   EXPECT_DOUBLE_EQ(atof(evalf("sin(pi+0.1)").c_str()), sin(M_PI + 0.1));
 }
 
-TEST(Equation, ExpNumeric) {
-  EXPECT_DOUBLE_EQ(atof(evalf("exp(1)").c_str()), exp(1));
-}
-
-TEST(Equation, Exp) { EQUATION_EXPECT_EQUAL("exp(0)", "1"); }
-
 TEST(Equation, TanNumeric) {
   EXPECT_DOUBLE_EQ(atof(evalf("tan(0.3)").c_str()), tan(0.3));
 }
 
 TEST(Equation, Tan) { EQUATION_EXPECT_EQUAL("tan(0)", "0"); }
+
+TEST(Equation, ASin) {
+  EQUATION_EXPECT_EQUAL("asin(0)", "0");
+  EQUATION_EXPECT_EQUAL("asin(1)", "pi/2");
+  EQUATION_EXPECT_EQUAL("asin(-1)", "-pi/2");
+  EQUATION_EXPECT_EQUAL("asin(-3^(1/2)/2)", "-pi/3");
+  EQUATION_EXPECT_EQUAL("asin(-2^(1/2)/2)", "-pi/4");
+  EQUATION_EXPECT_EQUAL("asin(-1/2)", "-pi/6");
+  EQUATION_EXPECT_EQUAL("asin(3^(1/2)/2)", "pi/3");
+  EQUATION_EXPECT_EQUAL("asin(2^(1/2)/2)", "pi/4");
+  EQUATION_EXPECT_EQUAL("asin(1/2)", "pi/6");
+}
+
+TEST(Equation, ASinNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("asin(0.3)").c_str()), asin(0.3));
+}
+
+TEST(Equation, ACos) {
+  EQUATION_EXPECT_EQUAL("acos(0)", "pi/2");
+  EQUATION_EXPECT_EQUAL("acos(1)", "0");
+  EQUATION_EXPECT_EQUAL("acos(-1)", "pi");
+  EQUATION_EXPECT_EQUAL("acos(-3^(1/2)/2)", "5/6*pi");
+  EQUATION_EXPECT_EQUAL("acos(-2^(1/2)/2)", "3/4*pi");
+  EQUATION_EXPECT_EQUAL("acos(-1/2)", "2/3*pi");
+  EQUATION_EXPECT_EQUAL("acos(3^(1/2)/2)", "pi/6");
+  EQUATION_EXPECT_EQUAL("acos(2^(1/2)/2)", "pi/4");
+  EQUATION_EXPECT_EQUAL("acos(1/2)", "pi/3");
+}
+
+TEST(Equation, ACosNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("acos(0.3)").c_str()), acos(0.3));
+}
+
+TEST(Equation, ATan) { EQUATION_EXPECT_EQUAL("atan(0)", "0"); }
+
+TEST(Equation, ATanNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("atan(0.3)").c_str()), atan(0.3));
+}
+
+TEST(Equation, Exp) {
+  EQUATION_EXPECT_EQUAL("exp(0)", "1");
+  EQUATION_EXPECT_EQUAL("exp(2*pi*i)", "1");
+  EQUATION_EXPECT_EQUAL("exp(pi*i)", "-1");
+  EQUATION_EXPECT_EQUAL("exp(1/2*pi*i)", "i");
+  EQUATION_EXPECT_EQUAL("exp(3/2*pi*i)", "-i");
+}
+
+TEST(Equation, ExpNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("exp(0.3)").c_str()), exp(0.3));
+}
 
 TEST(Equation, CosSpecialValues) {
   EQUATION_EXPECT_EQUAL("cos(0)", "1");
