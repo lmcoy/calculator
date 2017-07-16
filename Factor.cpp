@@ -3,6 +3,7 @@
 //
 #include <cassert>
 
+#include "ComplexNumber.hpp"
 #include "Factor.hpp"
 #include "Number.hpp"
 #include "Power.hpp"
@@ -147,20 +148,19 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
   }
   op1.insert(op1.end(), n.begin(), n.end());
 
-  // evaluate numerical factors (only necessary if n.size() > 0
-  NumberRepr value = NeutralElement();
-  for (auto it = op1.begin(); it != op1.end() && n.size() > 0;) {
-    if ((*it)->Type() == Node::Type_t::Number) {
-      auto ptr = std::static_pointer_cast<Number>(*it);
-      value = Operation1(value, ptr->GetValue());
+  // evaluate complex factors
+  auto value = std::complex<NumberRepr>(NumberRepr(1l), NumberRepr(0l));
+  for (auto it = op1.begin(); it != op1.end();) {
+    auto v = complex_number(*it);
+    if (v.second == true) {
+      value = complex_mul(value, v.first);
       it = op1.erase(it);
     } else {
       it++;
     }
   }
-  if (value != NeutralElement()) {
-    auto newnumber = std::make_shared<Number>(value);
-    op1.push_back(newnumber);
+  if (value != std::complex<NumberRepr>(NumberRepr(1l), NumberRepr(0l))) {
+    op1.push_back(node_from_complex(value));
   }
 
   simplify(op1, state);

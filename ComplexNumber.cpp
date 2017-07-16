@@ -102,4 +102,35 @@ NodePtr node_from_complex(std::complex<double> c) {
   return sum;
 }
 
+/**
+ node_from_complex generates a node pointer that represents the complex number
+ c.
+ */
+NodePtr node_from_complex(std::complex<NumberRepr> c) {
+  if (c.imag() == NumberRepr(0l) || c.imag() == NumberRepr(0.0)) {
+    return std::make_shared<Number>(c.real());
+  }
+  if (c.real() == NumberRepr(0l) || c.real() == NumberRepr(0.0)) {
+    auto factor = std::make_shared<Factor>();
+    factor->AddOp1(std::make_shared<Number>(c.imag()));
+    factor->AddOp1(std::make_shared<Variable>("i"));
+    return factor;
+  }
+  auto real =
+      node_from_complex(std::complex<NumberRepr>(c.real(), NumberRepr(0l)));
+  auto imag =
+      node_from_complex(std::complex<NumberRepr>(NumberRepr(0l), c.imag()));
+  auto sum = std::make_shared<Summand>();
+  sum->AddOp1(real);
+  sum->AddOp1(imag);
+  return sum;
+}
+
+std::complex<NumberRepr> complex_mul(const std::complex<NumberRepr> &a,
+                                     const std::complex<NumberRepr> &b) {
+  auto r = a.real() * b.real() - a.imag() * b.imag();
+  auto i = a.real() * b.imag() + a.imag() * b.real();
+  return std::complex<NumberRepr>(r, i);
+}
+
 } // namespace Equation
