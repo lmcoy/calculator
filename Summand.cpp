@@ -91,8 +91,11 @@ void Summand::ToLatex(std::ostream &s) {
             e->ToLatex(s);
           } else {
             s << " + ";
-            e->ToStream(s);
+            e->ToLatex(s);
           }
+        } else {
+            s << " + ";
+            e->ToLatex(s);
         }
       } else {
         s << " + ";
