@@ -204,6 +204,48 @@ TEST(Equation, ExpNumeric) {
   EXPECT_DOUBLE_EQ(atof(evalf("exp(0.3)").c_str()), exp(0.3));
 }
 
+TEST(Equation, Log) { EQUATION_EXPECT_EQUAL("log(1)", "0"); }
+
+TEST(Equation, LogNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("log(0.3)").c_str()), log(0.3));
+}
+
+TEST(Equation, Sinh) { EQUATION_EXPECT_EQUAL("sinh(0)", "0"); }
+
+TEST(Equation, SinhNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("sinh(0.3)").c_str()), sinh(0.3));
+}
+
+TEST(Equation, Cosh) { EQUATION_EXPECT_EQUAL("cosh(0)", "1"); }
+
+TEST(Equation, CoshNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("cosh(0.3)").c_str()), cosh(0.3));
+}
+
+TEST(Equation, Tanh) { EQUATION_EXPECT_EQUAL("tanh(0)", "0"); }
+
+TEST(Equation, TanhNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("tanh(0.3)").c_str()), tanh(0.3));
+}
+
+TEST(Equation, ArSinh) { EQUATION_EXPECT_EQUAL("arsinh(0)", "0"); }
+
+TEST(Equation, ArSinhNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("arsinh(0.3)").c_str()), asinh(0.3));
+}
+
+TEST(Equation, ArCosh) { EQUATION_EXPECT_EQUAL("arcosh(1)", "0"); }
+
+TEST(Equation, ArCoshNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("arcosh(1.3)").c_str()), acosh(1.3));
+}
+
+TEST(Equation, ArTanh) { EQUATION_EXPECT_EQUAL("artanh(0)", "0"); }
+
+TEST(Equation, ArTanhNumeric) {
+  EXPECT_DOUBLE_EQ(atof(evalf("artanh(0.3)").c_str()), atanh(0.3));
+}
+
 TEST(Equation, CosSpecialValues) {
   EQUATION_EXPECT_EQUAL("cos(0)", "1");
   EQUATION_EXPECT_EQUAL("cos(pi)", "-1");

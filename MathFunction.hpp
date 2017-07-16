@@ -65,6 +65,54 @@ public:
   virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
 };
 
+class FuncLog : public MathFunction {
+public:
+  FuncLog();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+};
+
+class FuncSqrt : public MathFunction {
+public:
+  FuncSqrt();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+  virtual NodePtr Eval(const std::list<NodePtr> &args, bool numeric = false);
+};
+
+class FuncSinh : public MathFunction {
+public:
+  FuncSinh();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+};
+
+class FuncCosh : public MathFunction {
+public:
+  FuncCosh();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+};
+
+class FuncTanh : public MathFunction {
+public:
+  FuncTanh();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+};
+
+class FuncArSinh : public MathFunction {
+public:
+  FuncArSinh();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+};
+
+class FuncArCosh : public MathFunction {
+public:
+  FuncArCosh();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+};
+
+class FuncArTanh : public MathFunction {
+public:
+  FuncArTanh();
+  virtual NodePtr EvalNum(const std::vector<std::complex<NumberRepr>> &args);
+};
 } // namespace Equation
 
 #endif

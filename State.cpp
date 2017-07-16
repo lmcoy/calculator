@@ -50,6 +50,14 @@ DefaultState::DefaultState() {
   funcs["acos"] = std::make_shared<FuncACos>();
   funcs["atan"] = std::make_shared<FuncATan>();
   funcs["exp"] = std::make_shared<FuncExp>();
+  funcs["log"] = std::make_shared<FuncLog>();
+  funcs["sqrt"] = std::make_shared<FuncSqrt>();
+  funcs["sinh"] = std::make_shared<FuncSinh>();
+  funcs["cosh"] = std::make_shared<FuncCosh>();
+  funcs["tanh"] = std::make_shared<FuncTanh>();
+  funcs["arsinh"] = std::make_shared<FuncArSinh>();
+  funcs["arcosh"] = std::make_shared<FuncArCosh>();
+  funcs["artanh"] = std::make_shared<FuncArTanh>();
   funcs["D"] = std::make_shared<Derivative>();
 
   variables["pi"] = std::make_shared<Number>(M_PI);
