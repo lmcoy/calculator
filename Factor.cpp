@@ -230,7 +230,6 @@ void Factor::ToLatex(std::ostream &s) {
     auto nb = std::static_pointer_cast<Number>(*it);
     if (nb->GetValue() < NumberRepr(0l)) {
       s << "-";
-      it++;
     }
   }
   for (; it != op1.end(); it++) {
@@ -254,9 +253,10 @@ void Factor::ToLatex(std::ostream &s) {
     }
     if (e->Type() == Node::Type_t::Number) {
       auto nb = std::static_pointer_cast<Number>(e);
-      if (nb->GetValue() == NumberRepr(-1l)) {
+      if (nb->GetValue() == NumberRepr(-1l) ||
+          nb->GetValue() == NumberRepr(-1.0)) {
 
-      } else if (nb->GetValue() < NumberRepr(-1l)) {
+      } else if (nb->GetValue() < NumberRepr(0l)) {
         auto r = nb->GetValue();
         r *= NumberRepr(-1l);
         r.ToLatex(num);
