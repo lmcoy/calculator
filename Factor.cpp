@@ -263,6 +263,17 @@ void Factor::ToLatex(std::ostream &s) {
       } else {
         e->ToLatex(num);
       }
+      // print \cdot if number*number^x
+      auto it2 = it;
+      it2++;
+      if (it2 != op1.end()) {
+        if ((*it2)->Type() == Node::Type_t::Power) {
+          auto p = std::static_pointer_cast<Power>(*it2);
+          if (p->Base()->Type() == Node::Type_t::Number) {
+            num << "\\cdot ";
+          }
+        }
+      }
     } else {
       e->ToLatex(num);
     }

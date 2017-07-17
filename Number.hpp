@@ -22,6 +22,10 @@ public:
 
   explicit Number(const NumberRepr &n) : value(n) {}
 
+  explicit Number(const Integer_t &i) : value(NumberRepr(i)) {}
+
+  explicit Number(const Rational_t &r) : value(NumberRepr(r)) {}
+
   virtual void Eval(NodePtr *base, std::shared_ptr<State> state,
                     bool numeric = false) {
     if (numeric) {

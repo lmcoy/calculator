@@ -158,8 +158,10 @@ NodePtr FuncSqrt::Eval(const std::list<NodePtr> &args, bool numeric) {
     return ret;
   }
   auto it = args.begin();
-  return std::make_shared<Power>(*it,
-                                 std::make_shared<Number>(NumberRepr(1l, 2l)));
+  NodePtr result = std::make_shared<Power>(
+      *it, std::make_shared<Number>(NumberRepr(1l, 2l)));
+  result->Eval(&result, std::make_shared<DefaultState>());
+  return result;
 }
 
 // -- sinh ---

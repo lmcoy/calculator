@@ -301,3 +301,15 @@ TEST(Equation, Derivative) {
   EQUATION_EXPECT_EQUAL("D(sin(5*x),x)", "5*cos(5*x)");
   EQUATION_EXPECT_EQUAL("D(cos(5*x^2),x)", "-10*x*sin(5*x^2)");
 }
+
+TEST(Equation, Root) {
+  EQUATION_EXPECT_EQUAL("sqrt(4)", "2");
+  EQUATION_EXPECT_EQUAL("4^(1/2)", "2");
+  EQUATION_EXPECT_EQUAL("sqrt(9)", "3");
+  EQUATION_EXPECT_EQUAL("9^(1/2)", "3");
+  EQUATION_EXPECT_EQUAL("sqrt(81)", "9");
+  EQUATION_EXPECT_EQUAL("81^(1/2)", "9");
+  EQUATION_EXPECT_EQUAL("27^(1/3)", "3");
+  EQUATION_EXPECT_EQUAL("20^(1/2)", "2*sqrt(5)");
+  EQUATION_EXPECT_EQUAL("27^(2/3)", "9");
+}

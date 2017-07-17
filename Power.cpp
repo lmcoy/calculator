@@ -10,6 +10,45 @@
 
 using namespace Equation;
 
+namespace {
+
+Integer_t power(const Integer_t &base, int n) {
+  Integer_t result(1l);
+  for (int i = 0; i < n; i++) {
+    result *= base;
+  }
+  return result;
+}
+
+std::pair<Integer_t, Integer_t> root_n(Integer_t A, int n) {
+  Integer_t a(2);
+  int num = 0;
+  Integer_t factor(1l);
+  Integer_t root(1l);
+  while (A > 1) {
+    if (A % a == 0) {
+      num += 1;
+      A /= a;
+    } else {
+      if (num > 0) {
+        factor *= power(a, num / n);
+        root *= power(a, num % n);
+      }
+      a += 1;
+      num = 0;
+    }
+  }
+  if (num > 0) {
+    factor *= power(a, num / n);
+    root *= power(a, num % n);
+  }
+  root *= A;
+
+  return std::pair<Integer_t, Integer_t>(factor, root);
+}
+
+} // namespace
+
 void Power::writeTreeToStream(std::ostream &s, const std::string &name) {
   std::string type = "op";
   s << name << "[label=<" << type << ", "
@@ -104,6 +143,41 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
       }
       if (tmp == Integer_t(3)) {
         *ba = std::make_shared<Number>(1l);
+        return;
+      }
+    }
+  }
+  // evalutate roots
+  if (exponent->Type() == Node::Type_t::Number &&
+      base->Type() == Node::Type_t::Number) {
+    auto e = std::static_pointer_cast<Number>(exponent);
+    auto b = std::static_pointer_cast<Number>(base);
+    if (b->GetValue() == NumberRepr(1l)) {
+      *ba = std::make_shared<Number>(1l);
+      return;
+    }
+    if (e->GetValue().IsFraction() && b->GetValue().IsFraction()) {
+      auto denom = e->GetValue().Denominator();
+      if (denom > Integer_t(1) && denom < Integer_t(10)) {
+        int d = denom.convert_to<int>();
+        auto base_num = root_n(b->GetValue().Numerator(), d);
+        auto base_denom = root_n(b->GetValue().Denominator(), d);
+
+        auto factor = std::make_shared<Number>(
+            Rational_t(base_num.first, base_denom.first));
+        auto root = std::make_shared<Number>(
+            Rational_t(base_num.second, base_denom.second));
+        if (base_num.first == base_denom.first) {
+          return;
+        }
+
+        auto newpower_exp = std::make_shared<Number>(e->GetValue().Numerator());
+        auto newfactor = std::make_shared<Factor>();
+        newfactor->AddOp1(std::make_shared<Power>(factor, newpower_exp));
+        newfactor->AddOp1(std::make_shared<Power>(root, exponent->clone()));
+        auto eval = std::static_pointer_cast<Node>(newfactor);
+        eval->Eval(&eval, state, numeric);
+        *ba = eval;
         return;
       }
     }

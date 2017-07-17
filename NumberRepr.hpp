@@ -29,6 +29,12 @@ public:
     rational = rat;
   }
 
+  explicit NumberRepr(const Integer_t &rat) {
+    isFraction = true;
+    isValid = true;
+    rational = rat;
+  }
+
   explicit NumberRepr(double l) { SetFromDouble(l); }
 
   NumberRepr &operator*=(const NumberRepr &rhs);
