@@ -12,6 +12,7 @@
 
 namespace Equation {
 
+/** Number represents a number. */
 class Number : public Node {
 public:
   explicit Number(const std::string &number) : value(number) {}
@@ -35,6 +36,7 @@ public:
 
   virtual enum Type_t Type() const { return Node::Type_t::Number; }
 
+  /** GetValue returns the NumberRepr stored by this Node. */
   NumberRepr GetValue() const { return value; }
 
   virtual void ToStream(std::ostream &s) { s << value; }
@@ -57,7 +59,7 @@ public:
   virtual NodePtr clone() const { return std::make_shared<Number>(value); }
 
 private:
-  NumberRepr value;
+  NumberRepr value; ///< actual number
 };
 } // namespace Equation
 

@@ -1,9 +1,5 @@
 //
-//  NumberRepr.cpp
-//  Project
-//
 //  Created by Lennart Oymanns on 03.05.17.
-//
 //
 
 #include "NumberRepr.hpp"
@@ -28,6 +24,7 @@ NumberRepr::NumberRepr(const std::string &s) {
   isValid = true;
 }
 
+/** SetFromInt sets the value of this number to fraction num/denom. */
 void NumberRepr::SetFromInt(long num, long denom) {
   isFraction = true;
   rational = Rational_t(num, denom);
@@ -40,6 +37,8 @@ void NumberRepr::SetFromInt(long num, long denom) {
   }
 }
 
+/** normal *= operator. If *this and rhs are both fractions the result is also a
+ * fraction. Otherwise the result is a floating point number. */
 NumberRepr &NumberRepr::operator*=(const NumberRepr &rhs) {
   if (!rhs.isValid) {
     isValid = false;
@@ -52,6 +51,9 @@ NumberRepr &NumberRepr::operator*=(const NumberRepr &rhs) {
   return *this;
 }
 
+/** normal /= operator. If *this and rhs are both fractions the result is also a
+ * fraction. Otherwise the result is a floating point number. If rhs is a
+ * fraction and equal to zero, this number is set to invalid. */
 NumberRepr &NumberRepr::operator/=(const NumberRepr &rhs) {
   if (!rhs.isValid) {
     isValid = false;
@@ -68,6 +70,8 @@ NumberRepr &NumberRepr::operator/=(const NumberRepr &rhs) {
   return *this;
 }
 
+/** normal += operator. If *this and rhs are both fractions the result is also a
+ * fraction. Otherwise the result is a floating point number. */
 NumberRepr &NumberRepr::operator+=(const NumberRepr &rhs) {
   if (!rhs.isValid) {
     isValid = false;
@@ -80,6 +84,8 @@ NumberRepr &NumberRepr::operator+=(const NumberRepr &rhs) {
   return *this;
 }
 
+/** normal -= operator. If *this and rhs are both fractions the result is also a
+ * fraction. Otherwise the result is a floating point number. */
 NumberRepr &NumberRepr::operator-=(const NumberRepr &rhs) {
   if (!rhs.isValid) {
     isValid = false;
@@ -97,18 +103,26 @@ std::ostream &operator<<(std::ostream &os, const NumberRepr &obj) {
   return os;
 }
 
+/** Pow returns the result of base^exponent.
+
+ If there are any problems (e.g. the exponent is too large), Pow returns an
+ invalid number. */
 NumberRepr NumberRepr::Pow(const NumberRepr &base, const NumberRepr &exp) {
   if (!base.isValid || !exp.isValid) {
+    // power of an invalid number is also invalid.
     auto inv = NumberRepr(0l);
     inv.isValid = false;
     return inv;
   }
   if (!base.IsFraction() || !exp.IsFraction()) {
+    // if either base or exponent are floating point numbers, calculate the
+    // floating point result.
     double b = base.Double();
     double e = exp.Double();
     return NumberRepr(pow(b, e));
   }
-  if (base.IsFraction() && exp.Denominator() == Integer_t(1)) {
+  if (exp.Denominator() == Integer_t(1)) {
+    // calculate power if it is not a nth root.
     Integer_t abs_enum = boost::multiprecision::abs(exp.Numerator());
     if (abs_enum > Integer_t(100)) {
       // if the exponent is too large, return a invalid number
@@ -131,11 +145,13 @@ NumberRepr NumberRepr::Pow(const NumberRepr &base, const NumberRepr &exp) {
     Rational_t res = result_denom / result_num;
     return NumberRepr(res);
   }
+  // calculate nth root numerically
   auto inv = NumberRepr(pow(base.Double(), exp.Double()));
   inv.isValid = false;
   return inv;
 }
 
+/** Double returns a floating point representation of the number. */
 double NumberRepr::Double() const {
   if (isFraction) {
     return rational.convert_to<double>();
@@ -143,6 +159,7 @@ double NumberRepr::Double() const {
   return value_double;
 }
 
+/** String returns a string representation of the number. */
 std::string NumberRepr::String() const {
   if (!isValid) {
     return "nan";
@@ -172,6 +189,7 @@ bool NumberRepr::operator==(const NumberRepr &n) const {
   return false;
 }
 
+/** ToLatex writes a latex representation of this number to stream s. */
 void NumberRepr::ToLatex(std::ostream &s) const {
   if (IsFraction()) {
     if (Denominator() != Integer_t(1)) {
@@ -202,4 +220,13 @@ bool NumberRepr::operator>(const NumberRepr &n) {
     return false;
   }
   return true;
+}
+
+/** SetFromDouble set the value of this number to the floating  point value l.
+ */
+void NumberRepr::SetFromDouble(double l) {
+  isFraction = false;
+  value_double = l;
+  isValid = true;
+  rational = boost::multiprecision::cpp_rational(0);
 }
