@@ -12,7 +12,6 @@ addons:
 
 compiler:
     - clang
-    - gcc
 
 before_script:
     - mkdir build
