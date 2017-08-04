@@ -34,7 +34,7 @@ public:
 
   virtual void ToStream(std::ostream &s) { s << vname; }
 
-  virtual void ToLatex(std::ostream &s) { s << vname; }
+  virtual void ToLatex(std::ostream &s);
 
   virtual void writeTreeToStream(std::ostream &s, const std::string &name);
 

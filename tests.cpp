@@ -112,6 +112,12 @@ TEST(Equation, Latex) {
   EXPECT_EQ(Eq("x^sin(x)").ToLatex(), "x^{\\sin\\left(x\\right)}");
   EXPECT_EQ(Eq("x^(1/3)").ToLatex(), "x^\\frac{1}{3}");
   EXPECT_EQ(Eq("x^2-4").ToLatex(), "x^2 - 4");
+  EXPECT_EQ(Eq("log(x)").ToLatex(), "\\log\\left(x\\right)");
+  EXPECT_EQ(Eq("exp(x)").ToLatex(), "\\exp\\left(x\\right)");
+  EXPECT_EQ(Eq("cos(x)").ToLatex(), "\\cos\\left(x\\right)");
+  EXPECT_EQ(Eq("pi").ToLatex(), "\\pi");
+  EXPECT_EQ(Eq("alpha").ToLatex(), "\\alpha");
+  EXPECT_EQ(Eq("beta").ToLatex(), "\\beta");
 }
 
 TEST(Equation, ToString) {

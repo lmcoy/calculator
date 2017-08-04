@@ -2,6 +2,7 @@
 //  Copyright © 2017 Lennart Oymanns. All rights reserved.
 //
 #include <algorithm>
+#include <set>
 
 #include "Function.hpp"
 #include "Number.hpp"
@@ -66,8 +67,9 @@ void Function::ToStream(std::ostream &s) {
 }
 
 void Function::ToLatex(std::ostream &s) {
-  static std::vector<std::string> funcs = {"exp", "sin"};
-  auto isl = std::find(funcs.begin(), funcs.end(), fname);
+  static std::set<std::string> funcs = { "exp", "sin",  "cos",  "tan",
+                                            "log", "sinh", "cosh", "tanh" };
+  auto isl = funcs.find(fname);
   if (isl != funcs.end()) {
     s << "\\";
   }
