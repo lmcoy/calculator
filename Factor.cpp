@@ -135,7 +135,8 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     return;
   }
 
-  // if a child is also a Factor, move elements to this Factor
+  // if a child is also a Factor, move elements to this Factor, i.e.
+  // a tree (*, a, (*, b, c)) is converted to (*, a, b, c).
   std::list<NodePtr> n;
   for (auto it = op1.begin(); it != op1.end();) {
     if ((*it)->Type() == Node::Type_t::Factor) {
@@ -160,7 +161,16 @@ void Factor::Eval(NodePtr *base, std::shared_ptr<State> state, bool numeric) {
     }
   }
   if (value != std::complex<NumberRepr>(NumberRepr(1l), NumberRepr(0l))) {
-    op1.push_back(node_from_complex(value));
+    // if the complex factor is a complex number, we have to insert a number and
+    // "i" as elements to this factor otherwise we would obtain the tree 
+    // (*, x, (*, 3, i)) instead of (*, x, 3, i).
+    auto c = node_from_complex(value);
+    if (c->Type() == Node::Type_t::Factor) {
+      auto fact = std::static_pointer_cast<Factor>(c);
+      op1.insert(op1.end(), fact->Data().begin(), fact->Data().end());
+    } else {
+      op1.push_back(c);
+    }
   }
 
   simplify(op1, state);
