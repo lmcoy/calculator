@@ -319,4 +319,6 @@ TEST(Equation, Root) {
   EQUATION_EXPECT_EQUAL("27^(1/3)", "3");
   EQUATION_EXPECT_EQUAL("20^(1/2)", "2*sqrt(5)");
   EQUATION_EXPECT_EQUAL("27^(2/3)", "9");
+  EQUATION_EXPECT_EQUAL("(-4)^(1/2)", "2*i");
+  EQUATION_EXPECT_EQUAL("sqrt(-7)", "sqrt(7)*i");
 }

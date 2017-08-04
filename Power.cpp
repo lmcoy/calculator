@@ -20,6 +20,7 @@ Integer_t power(const Integer_t &base, int n) {
   return result;
 }
 
+// returns (factor, root) such that A = factor * (root)^(1/n)
 std::pair<Integer_t, Integer_t> root_n(Integer_t A, int n) {
   Integer_t a(2);
   int num = 0;
@@ -160,14 +161,35 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
       auto denom = e->GetValue().Denominator();
       if (denom > Integer_t(1) && denom < Integer_t(10)) {
         int d = denom.convert_to<int>();
-        auto base_num = root_n(b->GetValue().Numerator(), d);
-        auto base_denom = root_n(b->GetValue().Denominator(), d);
+        bool add_imag = false;
+        bool add_neg = false;
+
+        auto b_num = b->GetValue().Numerator();
+        auto b_denom = b->GetValue().Denominator();
+
+        // can we use i?
+        if (b->GetValue() < NumberRepr(0l) &&
+            e->GetValue() == NumberRepr(Rational_t(1, 2))) {
+          add_imag = true;
+          b_num = boost::multiprecision::abs(b_num);
+          b_denom = boost::multiprecision::abs(b_denom);
+        }
+        if (b->GetValue() < NumberRepr(0l) &&
+            e->GetValue() == NumberRepr(Rational_t(-1, 2))) {
+          add_neg = true;
+          add_imag = true;
+          b_num = boost::multiprecision::abs(b_num);
+          b_denom = boost::multiprecision::abs(b_denom);
+        }
+        auto base_num = root_n(b_num, d);
+        auto base_denom = root_n(b_denom, d);
 
         auto factor = std::make_shared<Number>(
             Rational_t(base_num.first, base_denom.first));
         auto root = std::make_shared<Number>(
             Rational_t(base_num.second, base_denom.second));
-        if (base_num.first == base_denom.first) {
+        if (base_num.first == base_denom.first && !add_imag) {
+          // can not calculate root of base
           return;
         }
 
@@ -175,6 +197,12 @@ void Power::Eval(NodePtr *ba, std::shared_ptr<State> state, bool numeric) {
         auto newfactor = std::make_shared<Factor>();
         newfactor->AddOp1(std::make_shared<Power>(factor, newpower_exp));
         newfactor->AddOp1(std::make_shared<Power>(root, exponent->clone()));
+        if (add_imag) {
+          newfactor->AddOp1(std::make_shared<Variable>("i"));
+        }
+        if (add_neg) {
+          newfactor->AddOp1(std::make_shared<Number>(-1l));
+        }
         auto eval = std::static_pointer_cast<Node>(newfactor);
         eval->Eval(&eval, state, numeric);
         *ba = eval;
