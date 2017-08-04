@@ -94,9 +94,19 @@ void Summand::ToLatex(std::ostream &s) {
             e->ToLatex(s);
           }
         } else {
-            s << " + ";
-            e->ToLatex(s);
+          s << " + ";
+          e->ToLatex(s);
         }
+      } else if (e->Type() == Node::Type_t::Number) {
+        auto nb = std::static_pointer_cast<Number>(e);
+        auto r = nb->GetValue();
+        if (nb->GetValue() < NumberRepr(0l)) {
+          s << " - ";
+          r *= NumberRepr(-1l);
+        } else {
+          s << " + ";
+        }
+        r.ToLatex(s);
       } else {
         s << " + ";
         e->ToLatex(s);
@@ -144,13 +154,13 @@ std::pair<NumberRepr, NodePtr> clone_expr_wo_coeff(NodePtr n) {
 }
 
 void Summand::simplify() {
-  std::list<std::pair<NumberRepr, NodePtr>> polynom;
+  std::list<std::pair<NumberRepr, NodePtr> > polynom;
   for (auto &e : op1) {
     auto nom = clone_expr_wo_coeff(e);
     auto pos = std::find_if(polynom.begin(), polynom.end(),
                             [&nom](const std::pair<NumberRepr, NodePtr> &n) {
-                              return n.second->equals(nom.second);
-                            });
+      return n.second->equals(nom.second);
+    });
     if (pos == polynom.end()) {
       polynom.push_back(nom);
     } else {

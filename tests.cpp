@@ -111,6 +111,7 @@ TEST(Equation, Latex) {
   EXPECT_EQ(Eq("x^2").ToLatex(), "x^2");
   EXPECT_EQ(Eq("x^sin(x)").ToLatex(), "x^{\\sin\\left(x\\right)}");
   EXPECT_EQ(Eq("x^(1/3)").ToLatex(), "x^\\frac{1}{3}");
+  EXPECT_EQ(Eq("x^2-4").ToLatex(), "x^2 - 4");
 }
 
 TEST(Equation, ToString) {
